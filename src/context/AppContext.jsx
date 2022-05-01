@@ -5,13 +5,22 @@ const AppContext = createContext();
 const AppProvider = ({ children }) => {
   const [token, setToken] = useState("");
   const [value, setValue] = useState({});
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [globalSales, setGlobalSales] = useState([]);
+  const [userSales, setUserSales] = useState([]);
 
   useEffect(() => {
     setValue({
       token,
       setToken,
+      isAdmin,
+      setIsAdmin,
+      globalSales,
+      setGlobalSales,
+      userSales,
+      setUserSales,
     });
-  }, []);
+  }, [token, isAdmin, globalSales, userSales]);
 
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

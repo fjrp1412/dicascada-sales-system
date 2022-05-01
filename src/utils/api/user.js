@@ -1,4 +1,4 @@
-const BASE_URL = "https://lambda-sales-system-api.herokuapp.com/api/";
+const BASE_URL = "https://lambda-sales-api.azurewebsites.net/api/";
 
 const login = async ({ form }) => {
   const url = BASE_URL + `user/token/`;
@@ -22,4 +22,19 @@ const login = async ({ form }) => {
   }
 };
 
-export { login };
+const getMe = async ({ token }) => {
+  const url = BASE_URL + `user/me/`;
+  const requestOptions = { headers: { Authorization: `Token ${token}` } };
+
+  try {
+    const request = await fetch(url, requestOptions);
+    const data = await request.json();
+    console.log(data);
+
+    return { request, data };
+  } catch (e) {
+    return { request: { ok: false, message: e.message } };
+  }
+};
+
+export { login, getMe };

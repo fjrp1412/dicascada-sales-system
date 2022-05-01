@@ -1,19 +1,15 @@
 import { useContext } from "react";
 import Head from "next/head";
-import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Box, Button, Container, Grid, Link, TextField, Typography } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Facebook as FacebookIcon } from "../icons/facebook";
-import { Google as GoogleIcon } from "../icons/google";
-import { login } from "../utils/api/user";
+import { login, getMe } from "../utils/api/user";
 import { AppContext } from "src/context/AppContext";
 
 const Login = () => {
   const router = useRouter();
-  const { setToken, token } = useContext(AppContext)
+  const { setToken, setIsAdmin } = useContext(AppContext);
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -26,9 +22,14 @@ const Login = () => {
     onSubmit: async (form) => {
       console.log(form);
       const { data, request } = await login({ form });
-      setToken(data.token)
-      console.log(token)
+      const token = data.token;
+      setToken(token);
       if (request.ok) {
+        const { request, data } = await getMe({ token });
+        if (!data.type.toLowerCase() === "salesman") {
+          setIsAdmin(true);
+        }
+
         router.push("/");
       }
     },
