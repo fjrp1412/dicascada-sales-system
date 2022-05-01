@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { format } from "date-fns";
 import { v4 as uuid } from "uuid";
 import PerfectScrollbar from "react-perfect-scrollbar";
@@ -23,21 +23,24 @@ import { SeverityPill } from "../severity-pill";
 
 export const LatestOrders = (props) => {
  const {orders, handlePageChange, page } = props;
+ const ref = useRef(null)
+
+ console.log(orders);
 
   return (
     <Card {...props}>
-      <CardHeader title="Latest Orders" />
+      <CardHeader title="Ventas" />
         <Box sx={{ minWidth: 800 }}>
-        <TableContainer sx={{ maxHeight: 600 }}>
+        <TableContainer sx={{ maxHeight: 600 }} >
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Order Ref</TableCell>
-                <TableCell>Customer</TableCell>
+                <TableCell>Cliente</TableCell>
+                <TableCell>Factura</TableCell>
                 <TableCell sortDirection="desc">
                   <Tooltip enterDelay={300} title="Sort">
                     <TableSortLabel active direction="desc">
-                      Date
+                      Fecha
                     </TableSortLabel>
                   </Tooltip>
                 </TableCell>
@@ -48,6 +51,7 @@ export const LatestOrders = (props) => {
               {orders.results.map((order) => (
                 <TableRow hover key={order.id}>
                   <TableCell>{order.client.name}</TableCell>
+                  <TableCell>{order.id}</TableCell>
                   <TableCell>{order.date}</TableCell>
                   <TableCell>
                     <SeverityPill
@@ -90,14 +94,6 @@ export const LatestOrders = (props) => {
           p: 2,
         }}
       >
-        <Button
-          color="primary"
-          endIcon={<ArrowRightIcon fontSize="small" />}
-          size="small"
-          variant="text"
-        >
-          View all
-        </Button>
       </Box>
     </Card>
   );

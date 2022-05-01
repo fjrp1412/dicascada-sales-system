@@ -27,6 +27,7 @@ const Dashboard = () => {
 
   const handlePageChange = async (event, newPage) => {
     setPage(newPage)
+    ref.current.scrollIntoView();
     const { data, request } = await getSales(token, sales.next);
     setSales(data);
   }
@@ -56,9 +57,6 @@ const Dashboard = () => {
             </Grid>
             <Grid item xl={3} lg={3} sm={6} xs={12}>
               <TotalProfit sx={{ height: "100%" }} />
-            </Grid>
-            <Grid item lg={8} md={12} xl={9} xs={12}>
-              <Sales />
             </Grid>
             <Grid item lg={8} md={12} xl={9} xs={12}>
               {sales && <LatestOrders orders={sales} 
