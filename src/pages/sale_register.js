@@ -14,11 +14,13 @@ import {
   Select,
   MenuItem,
   InputLabel,
+  IconButton,
 } from "@mui/material";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { login, getMe } from "../utils/api/user";
 import { DashboardLayout } from "../components/dashboard-layout";
 import { AppContext } from "src/context/AppContext";
-import { ProductsList } from "../components/products/products-list"
+import { ProductsList } from "../components/products/products-list";
 import { getProducts } from "../utils/api/products";
 
 const SaleRegister = () => {
@@ -36,10 +38,10 @@ const SaleRegister = () => {
 
   const handlePageChangeProducts = async (event, newPage) => {
     const newUrl = newPage > pageProducts ? products.next : products.previous;
-    setPageProducts(newPage)
+    setPageProducts(newPage);
     const { data, request } = await getProducts(token, newUrl);
     setProducts(data);
-  }
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -131,7 +133,7 @@ const SaleRegister = () => {
                 value={formik.values.status}
                 variant="outlined"
               />
-              
+
               <InputLabel id="label-client">Cliente</InputLabel>
               <Select
                 sx={{ marginTop: 2, marginBottom: 1 }}
@@ -166,12 +168,19 @@ const SaleRegister = () => {
               </Select>
 
 
+
               <ProductsList
-              products={formik.values.products}
-              headLabels={["Producto", "Cantidad", "Precio", "Total"]}
-              page={pageProducts}
-              handlePageChange={handlePageChangeProducts}
+                products={formik.values.products}
+                headLabels={["Producto", "Cantidad", "Precio", "Total", "Eliminar", "Editar"]}
+                page={pageProducts}
+                handlePageChange={handlePageChangeProducts}
               ></ProductsList>
+              <Box sx={{ py: 2, display: "flex", justifyContent: "flex-end", width: "100%" }}>
+                <IconButton
+                >
+                <AddCircleIcon/>
+                </IconButton>
+              </Box>
 
               <Box sx={{ py: 2 }}>
                 <Button
