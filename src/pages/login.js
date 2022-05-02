@@ -9,7 +9,7 @@ import { AppContext } from "src/context/AppContext";
 
 const Login = () => {
   const router = useRouter();
-  const { setToken, setIsAdmin } = useContext(AppContext);
+  const { setToken, setIsAdmin, isAdmin } = useContext(AppContext);
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -26,8 +26,10 @@ const Login = () => {
       setToken(token);
       if (request.ok) {
         const { request, data } = await getMe({ token });
-        if (!data.type.toLowerCase() === "salesman") {
+        if (data.type.toLowerCase() !== "salesman") {
           setIsAdmin(true);
+          console.log("is admin", isAdmin);
+          console.log("type", data.type);
         }
 
         router.push("/");

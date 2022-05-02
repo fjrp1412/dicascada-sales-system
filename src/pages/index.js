@@ -16,9 +16,11 @@ import { getSales } from "../utils/api/sales";
 import { getClients } from "../utils/api/clients";
 import { getProducts } from "../utils/api/products";
 import { ClientsList } from "../components/dashboard/clients-list";
+import { DashboardAdmin } from "../components/admin/dashboard-admin"
+import { DashboardSalesman } from "../components/salesman/dashboard-salesman";
 
 const Dashboard = () => {
-  const { token, globalSales, setGlobalSales } = useContext(AppContext);
+  const { token, isAdmin } = useContext(AppContext);
   const [sales, setSales] = useState(null);
   const [pageSales, setPageSales] = useState(0);
   const [products, setProducts] = useState(null);
@@ -70,10 +72,10 @@ const Dashboard = () => {
   }
 
 
-
-
   return (
     <>
+    {(isAdmin && <DashboardAdmin />) || (
+      <>
       <Head>
         <title>Dashboard | Material Kit</title>
       </Head>
@@ -121,10 +123,13 @@ const Dashboard = () => {
           </Grid>
         </Container>
       </Box>
+      </>
+
+    )}
+
     </>
   );
 };
 
-Dashboard.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Dashboard;
