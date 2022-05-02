@@ -22,7 +22,7 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { SeverityPill } from "../severity-pill";
 
 export const ProductsList = (props) => {
- const {products, handlePageChange, page } = props;
+ const {products, handlePageChange, page, headLabels, pagination } = props;
 
   return (
     <Card {...props}>
@@ -32,15 +32,13 @@ export const ProductsList = (props) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Producto</TableCell>
-                <TableCell>ID</TableCell>
-                <TableCell>Precio general</TableCell>
-                <TableCell>Precio especial</TableCell>
-                <TableCell>Precio convenio</TableCell>
+              {headLabels.map((label) => (
+                <TableCell key={label}>{label}</TableCell>
+              ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {products.results.map((product) => (
+              {products && products.results.map((product) => (
                 <TableRow hover key={product.id}>
                   <TableCell>{product.name}</TableCell>
                   <TableCell>{product.id}</TableCell>
@@ -52,9 +50,10 @@ export const ProductsList = (props) => {
             </TableBody>
             <TableFooter>
               <TableRow>
+              {pagination && (
                 <TablePagination
                   colSpan={3}
-                  count={products.count}
+                  count={-1}
                   rowsPerPage={100}
                   onPageChange={handlePageChange}
                   page={page}
@@ -65,6 +64,8 @@ export const ProductsList = (props) => {
                     native: true,
                   }}
                 />
+              )}
+
               </TableRow>
             </TableFooter>
           </Table>

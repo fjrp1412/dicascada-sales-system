@@ -8,6 +8,7 @@ const AppProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [globalSales, setGlobalSales] = useState([]);
   const [userSales, setUserSales] = useState([]);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     setValue({

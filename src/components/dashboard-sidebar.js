@@ -37,7 +37,7 @@ const items = [
 
   },
   {
-    href: '/new-sale',
+    href: '/sale_register',
     icon: (<LockIcon fontSize="small" />),
     title: 'Registrar Venta',
     admin: false,
