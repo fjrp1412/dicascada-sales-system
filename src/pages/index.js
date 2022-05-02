@@ -13,7 +13,9 @@ import { TrafficByDevice } from "../components/dashboard/traffic-by-device";
 import { DashboardLayout } from "../components/dashboard-layout";
 import { AppContext } from "src/context/AppContext";
 import { getSales } from "../utils/api/sales";
+import { getClients } from "../utils/api/clients";
 import { getProducts } from "../utils/api/products";
+import { ClientsList } from "../components/dashboard/clients-list";
 
 const Dashboard = () => {
   const { token, globalSales, setGlobalSales } = useContext(AppContext);
@@ -21,6 +23,8 @@ const Dashboard = () => {
   const [pageSales, setPageSales] = useState(0);
   const [products, setProducts] = useState(null);
   const [pageProducts, setPageProducts] = useState(0);
+  const [pageClients, setPageClients] = useState(0);
+  const [clients, setClients] = useState(null);
 
   useEffect(async () => {
     const { data, request } = await getSales(token, null);
@@ -36,6 +40,14 @@ const Dashboard = () => {
     }
   }, [token]);
 
+  useEffect(async () => {
+    const { data, request } = await getClients(token, null);
+    if (request.ok) {
+      setClients(data);
+    }
+  }, [token]);
+
+
   const handlePageChangeSales = async (event, newPage) => {
     setPageSales(newPage)
     const newUrl = newPage > pageSales ? sales.next : sales.previous;
@@ -49,6 +61,14 @@ const Dashboard = () => {
     const { data, request } = await getProducts(token, newUrl);
     setProducts(data);
   }
+
+  const handlePageChangeClients = async (event, newPage) => {
+    setPageClients(newPage)
+    const newUrl = newPage > pageClients ? clients.next : clients.previous;
+    const { data, request } = await getSales(token, newUrl);
+    setClients(data);
+  }
+
 
 
 
@@ -75,7 +95,7 @@ const Dashboard = () => {
             <Grid item xl={3} lg={3} sm={6} xs={12}>
               <TasksProgress />
             </Grid>
-            <Grid item lg={8} md={12} xl={9} xs={12}>
+            <Grid item lg={12} md={12} xl={9} xs={12}>
               {sales && <LatestOrders orders={sales} 
               handlePageChange={handlePageChangeSales} 
               page={pageSales}
@@ -83,10 +103,18 @@ const Dashboard = () => {
               />}
             </Grid>
 
-            <Grid item lg={8} md={12} xl={9} xs={12}>
+            <Grid item lg={12} md={12} xl={9} xs={12}>
               {products && <ProductsList products={products} 
               handlePageChange={handlePageChangeProducts} 
               page={pageProducts}
+
+              />}
+            </Grid>
+
+            <Grid item lg={12} md={12} xl={9} xs={12}>
+              {clients && <ClientsList clients={clients} 
+              handlePageChange={handlePageChangeClients} 
+              page={pageClients}
 
               />}
             </Grid>

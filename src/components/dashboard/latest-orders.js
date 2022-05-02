@@ -30,8 +30,8 @@ export const LatestOrders = (props) => {
   return (
     <Card {...props}>
       <CardHeader title="Ventas" />
-        <Box sx={{ minWidth: 800 }}>
-        <TableContainer sx={{ maxHeight: 600 }} >
+        <Box sx={{ minWidth: 320 }}>
+        <TableContainer sx={{ maxHeight: 600, minWidth: 320 }} >
           <Table>
             <TableHead>
               <TableRow>

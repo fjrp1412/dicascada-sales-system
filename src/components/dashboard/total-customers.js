@@ -44,21 +44,6 @@ export const TotalCustomers = (props) => (
           pt: 2
         }}
       >
-        <ArrowUpwardIcon color="success" />
-        <Typography
-          variant="body2"
-          sx={{
-            mr: 1
-          }}
-        >
-          16%
-        </Typography>
-        <Typography
-          color="textSecondary"
-          variant="caption"
-        >
-          Since last month
-        </Typography>
       </Box>
     </CardContent>
   </Card>

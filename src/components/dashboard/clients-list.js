@@ -21,32 +21,30 @@ import {
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { SeverityPill } from "../severity-pill";
 
-export const ProductsList = (props) => {
- const {products, handlePageChange, page } = props;
+export const ClientsList = (props) => {
+ const {clients, handlePageChange, page } = props;
 
   return (
     <Card {...props}>
-      <CardHeader title="Lista de Productos" />
+      <CardHeader title="Lista de Clientes" />
         <Box sx={{ minWidth: 320 }}>
         <TableContainer sx={{ maxHeight: 600, minWidth: 320 }} >
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>Cliente</TableCell>
-                <TableCell>Factura</TableCell>
-                <TableCell>Precio general</TableCell>
-                <TableCell>Precio especial</TableCell>
-                <TableCell>Precio convenio</TableCell>
+                <TableCell>Cedula/rif</TableCell>
+                <TableCell>Tlf</TableCell>
+                <TableCell>Direccion</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {products.results.map((product) => (
-                <TableRow hover key={product.id}>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.id}</TableCell>
-                  <TableCell>{product.price_1} {product.price_1_currency}</TableCell>
-                  <TableCell>{product.price_2} {product.price_2_currency}</TableCell>
-                  <TableCell>{product.price_3} {product.price_3_currency}</TableCell>
+              {clients.results.map((client) => (
+                <TableRow hover key={client.id}>
+                  <TableCell>{client.name}</TableCell>
+                  <TableCell>{client.identity_card}</TableCell>
+                  <TableCell>{client.phone === "nan" ? "" : client.phone}</TableCell>
+                  <TableCell>{client.address === "nan" ? "" : client.address}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -54,7 +52,7 @@ export const ProductsList = (props) => {
               <TableRow>
                 <TablePagination
                   colSpan={3}
-                  count={products.count}
+                  count={clients.count}
                   rowsPerPage={100}
                   onPageChange={handlePageChange}
                   page={page}
