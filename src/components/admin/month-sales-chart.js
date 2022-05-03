@@ -70,7 +70,7 @@ const MonthSalesChart = () => (
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="sales" stroke="#82ca9d" />
+          <Line type="monotone" name="Ventas" dataKey="sales" stroke="#82ca9d" />
         </LineChart>
       </CardContent>
     </Card>

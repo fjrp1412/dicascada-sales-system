@@ -19,6 +19,7 @@ import { getProducts } from "../../utils/api/products";
 import { ClientsList } from "../dashboard/clients-list";
 import { ComparativePercentagePanel } from "./comparative-percentage-panel";
 import { MonthSalesChart } from "./month-sales-chart";
+import { MonthCategoriesChart } from "./month-categories-chart";
 
 const DashboardAdmin = () => {
   const { token, globalSales, setGlobalSales } = useContext(AppContext);
@@ -58,6 +59,8 @@ const DashboardAdmin = () => {
               </Grid>
 
               <MonthSalesChart />
+
+              <MonthCategoriesChart />
             </Grid>
           </Container>
         </DashboardLayout>
