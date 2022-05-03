@@ -2,12 +2,13 @@ import Head from "next/head";
 import { useState, useEffect, useContext } from "react";
 import { Box, Container, Grid } from "@mui/material";
 import { Budget } from "../dashboard/budget";
+import { MonthSales } from "./month-sales";
 import { LatestOrders } from "../dashboard/latest-orders";
 import { LatestProducts } from "../dashboard/latest-products";
 import { Sales } from "../dashboard/sales";
 import { TasksProgress } from "../dashboard/tasks-progress";
 import { TotalCustomers } from "../dashboard/total-customers";
-import { ProductsList} from "../dashboard/products-list";
+import { ProductsList } from "../dashboard/products-list";
 import { TotalProfit } from "../dashboard/total-profit";
 import { TrafficByDevice } from "../dashboard/traffic-by-device";
 import { DashboardLayout } from "../dashboard-layout";
@@ -16,6 +17,8 @@ import { getSales } from "../../utils/api/sales";
 import { getClients } from "../../utils/api/clients";
 import { getProducts } from "../../utils/api/products";
 import { ClientsList } from "../dashboard/clients-list";
+import { ComparativePercentagePanel } from "./comparative-percentage-panel";
+import { MonthSalesChart } from "./month-sales-chart";
 
 const DashboardAdmin = () => {
   const { token, globalSales, setGlobalSales } = useContext(AppContext);
@@ -38,21 +41,26 @@ const DashboardAdmin = () => {
           py: 8,
         }}
       >
-      <DashboardLayout>
-        <Container maxWidth={false}>
-          <Grid container spacing={3}>
-            <Grid item lg={3} sm={6} xl={3} xs={12}>
-              <Budget />
+        <DashboardLayout>
+          <Container maxWidth={false}>
+            <Grid container spacing={3}>
+              <Grid item lg={3} sm={6} xl={3} xs={12}>
+                <MonthSales />
+              </Grid>
+              <Grid item xl={3} lg={3} sm={6} xs={12}>
+                <TotalCustomers />
+              </Grid>
+              <Grid item xl={3} lg={3} sm={6} xs={12}>
+                <TasksProgress />
+              </Grid>
+              <Grid item xl={3} lg={3} sm={6} xs={12}>
+                <ComparativePercentagePanel />
+              </Grid>
+
+              <MonthSalesChart />
             </Grid>
-            <Grid item xl={3} lg={3} sm={6} xs={12}>
-              <TotalCustomers />
-            </Grid>
-            <Grid item xl={3} lg={3} sm={6} xs={12}>
-              <TasksProgress />
-            </Grid>
-          </Grid>
-        </Container>
-</DashboardLayout>
+          </Container>
+        </DashboardLayout>
       </Box>
     </>
   );

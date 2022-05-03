@@ -1,9 +1,8 @@
 import { Avatar, Box, Card, CardContent, Grid, Typography } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import MoneyIcon from '@mui/icons-material/Money';
+import { Money, PieChart } from '@mui/icons-material';
 
-export const Budget = (props) => {
-return (
+export const ComparativePercentagePanel = (props) => (
   <Card
     sx={{ height: '100%' }}
     {...props}
@@ -20,13 +19,13 @@ return (
             gutterBottom
             variant="overline"
           >
-            NUMERO DE VENTAS
+            PORCENTAJE DE VENTAS DEL MES
           </Typography>
           <Typography
             color="textPrimary"
             variant="h4"
           >
-            24
+            +1.2%
           </Typography>
         </Grid>
         <Grid item>
@@ -37,7 +36,7 @@ return (
               width: 56
             }}
           >
-            <MoneyIcon />
+            <PieChart  />
           </Avatar>
         </Grid>
       </Grid>
@@ -52,4 +51,3 @@ return (
     </CardContent>
   </Card>
 );
-}

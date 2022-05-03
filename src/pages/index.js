@@ -7,7 +7,7 @@ import { LatestProducts } from "../components/dashboard/latest-products";
 import { Sales } from "../components/dashboard/sales";
 import { TasksProgress } from "../components/dashboard/tasks-progress";
 import { TotalCustomers } from "../components/dashboard/total-customers";
-import { ProductsList} from "../components/dashboard/products-list";
+import { ProductsList } from "../components/dashboard/products-list";
 import { TotalProfit } from "../components/dashboard/total-profit";
 import { TrafficByDevice } from "../components/dashboard/traffic-by-device";
 import { DashboardLayout } from "../components/dashboard-layout";
@@ -16,7 +16,7 @@ import { getSales } from "../utils/api/sales";
 import { getClients } from "../utils/api/clients";
 import { getProducts } from "../utils/api/products";
 import { ClientsList } from "../components/dashboard/clients-list";
-import { DashboardAdmin } from "../components/admin/dashboard-admin"
+import { DashboardAdmin } from "../components/admin/dashboard-admin";
 import { DashboardSalesman } from "../components/salesman/dashboard-salesman";
 
 const Dashboard = () => {
@@ -49,87 +49,42 @@ const Dashboard = () => {
     }
   }, [token]);
 
-
   const handlePageChangeSales = async (event, newPage) => {
-    setPageSales(newPage)
+    setPageSales(newPage);
     const newUrl = newPage > pageSales ? sales.next : sales.previous;
     const { data, request } = await getSales(token, newUrl);
     setSales(data);
-  }
+  };
 
   const handlePageChangeProducts = async (event, newPage) => {
     const newUrl = newPage > pageProducts ? products.next : products.previous;
-    setPageProducts(newPage)
+    setPageProducts(newPage);
     const { data, request } = await getProducts(token, newUrl);
     setProducts(data);
-  }
+  };
 
   const handlePageChangeClients = async (event, newPage) => {
-    setPageClients(newPage)
+    setPageClients(newPage);
     const newUrl = newPage > pageClients ? clients.next : clients.previous;
     const { data, request } = await getSales(token, newUrl);
     setClients(data);
+  };
+
+  return <>
+  {(isAdmin && <DashboardAdmin />) || (sales && products && clients && <DashboardSalesman 
+   token={token}
+    sales={sales}
+    pageSales={pageSales}
+    products={products}
+    pageProducts={pageProducts}
+    pageClients={pageClients}
+    clients={clients}
+    handlePageChangeSales={handlePageChangeSales}
+    handlePageChangeProducts={handlePageChangeProducts}
+    handlePageChangeClients={handlePageChangeClients}
+  />)
   }
-
-
-  return (
-    <>
-    {(isAdmin && <DashboardAdmin />) || (
-      <>
-      <Head>
-        <title>Dashboard | Material Kit</title>
-      </Head>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          py: 8,
-        }}
-      >
-        <Container maxWidth={false}>
-          <Grid container spacing={3}>
-            <Grid item lg={3} sm={6} xl={3} xs={12}>
-              <Budget />
-            </Grid>
-            <Grid item xl={3} lg={3} sm={6} xs={12}>
-              <TotalCustomers />
-            </Grid>
-            <Grid item xl={3} lg={3} sm={6} xs={12}>
-              <TasksProgress />
-            </Grid>
-            <Grid item lg={12} md={12} xl={9} xs={12}>
-              {sales && <LatestOrders orders={sales} 
-              handlePageChange={handlePageChangeSales} 
-              page={pageSales}
-
-              />}
-            </Grid>
-
-            <Grid item lg={12} md={12} xl={9} xs={12}>
-              {products && <ProductsList products={products} 
-              handlePageChange={handlePageChangeProducts} 
-              page={pageProducts}
-
-              />}
-            </Grid>
-
-            <Grid item lg={12} md={12} xl={9} xs={12}>
-              {clients && <ClientsList clients={clients} 
-              handlePageChange={handlePageChangeClients} 
-              page={pageClients}
-
-              />}
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
-      </>
-
-    )}
-
-    </>
-  );
+  </>;
 };
-
 
 export default Dashboard;
