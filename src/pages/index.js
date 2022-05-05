@@ -1,16 +1,5 @@
 import Head from "next/head";
 import { useState, useEffect, useContext } from "react";
-import { Box, Container, Grid } from "@mui/material";
-import { Budget } from "../components/dashboard/budget";
-import { LatestOrders } from "../components/dashboard/latest-orders";
-import { LatestProducts } from "../components/dashboard/latest-products";
-import { Sales } from "../components/dashboard/sales";
-import { TasksProgress } from "../components/dashboard/tasks-progress";
-import { TotalCustomers } from "../components/dashboard/total-customers";
-import { ProductsList } from "../components/dashboard/products-list";
-import { TotalProfit } from "../components/dashboard/total-profit";
-import { TrafficByDevice } from "../components/dashboard/traffic-by-device";
-import { DashboardLayout } from "../components/dashboard-layout";
 import { AppContext } from "src/context/AppContext";
 import { getSales } from "../utils/api/sales";
 import { getClients } from "../utils/api/clients";
@@ -20,13 +9,13 @@ import { DashboardAdmin } from "../components/admin/dashboard-admin";
 import { DashboardSalesman } from "../components/salesman/dashboard-salesman";
 
 const Dashboard = () => {
-  const { token, isAdmin } = useContext(AppContext);
+  const { token, isAdmin, clients, setClients, products, setProducts, loguedUser, setLoguedUser } = useContext(AppContext);
   const [sales, setSales] = useState(null);
   const [pageSales, setPageSales] = useState(0);
-  const [products, setProducts] = useState(null);
   const [pageProducts, setPageProducts] = useState(0);
   const [pageClients, setPageClients] = useState(0);
-  const [clients, setClients] = useState(null);
+
+  console.log(loguedUser);
 
   useEffect(async () => {
     const { data, request } = await getSales(token, null);
@@ -48,6 +37,7 @@ const Dashboard = () => {
       setClients(data);
     }
   }, [token]);
+
 
   const handlePageChangeSales = async (event, newPage) => {
     setPageSales(newPage);

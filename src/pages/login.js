@@ -9,7 +9,7 @@ import { AppContext } from "src/context/AppContext";
 
 const Login = () => {
   const router = useRouter();
-  const { setToken, setIsAdmin, isAdmin } = useContext(AppContext);
+  const { setToken, setIsAdmin, isAdmin, loguedUser, setLoguedUser } = useContext(AppContext);
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -31,6 +31,7 @@ const Login = () => {
           console.log("is admin", isAdmin);
           console.log("type", data.type);
         }
+        setLoguedUser(data);
 
         router.push("/");
       }

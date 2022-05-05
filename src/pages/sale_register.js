@@ -16,25 +16,19 @@ import {
   InputLabel,
   IconButton,
 } from "@mui/material";
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { login, getMe } from "../utils/api/user";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { DashboardLayout } from "../components/dashboard-layout";
 import { AppContext } from "src/context/AppContext";
 import { ProductsList } from "../components/products/products-list";
 import { getProducts } from "../utils/api/products";
+import { FormSalesProductsModal } from "../components/sales/form-products-modal";
 
 const SaleRegister = () => {
   const router = useRouter();
   const [pageProducts, setPageProducts] = useState(0);
-  const [products, setProducts] = useState(null);
-  const { token } = useContext(AppContext);
-
-  useEffect(async () => {
-    const { data, request } = await getProducts(token, null);
-    if (request.ok) {
-      setProducts(data);
-    }
-  }, [token]);
+  const [products, setProducts] = useState([]);
+  const { token, clients, loguedUser } = useContext(AppContext);
+  const [openModal, setOpenModal] = useState(false);
 
   const handlePageChangeProducts = async (event, newPage) => {
     const newUrl = newPage > pageProducts ? products.next : products.previous;
@@ -74,9 +68,10 @@ const SaleRegister = () => {
             display: "flex",
             flexGrow: 1,
             minHeight: "100%",
+            width: "100%",
           }}
         >
-          <Container maxWidth="sm">
+          <Container sx={{width: "100%"}} >
             <form onSubmit={formik.handleSubmit}>
               <Box sx={{ my: 3 }}>
                 <Typography color="textPrimary" variant="h4">
@@ -132,6 +127,7 @@ const SaleRegister = () => {
                 type="text"
                 value={formik.values.status}
                 variant="outlined"
+                disabled
               />
 
               <InputLabel id="label-client">Cliente</InputLabel>
@@ -145,40 +141,43 @@ const SaleRegister = () => {
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
               >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                {clients &&
+                  clients.results.map((client) => (
+                    <MenuItem value={client.id} key={client.id}>
+                      {client.name}
+                    </MenuItem>
+                  ))}
               </Select>
 
               <InputLabel id="label-salesman">Vendedor</InputLabel>
-              <Select
+              <TextField
                 sx={{ marginTop: 2, marginBottom: 1 }}
                 fullWidth
                 label="Vendedor"
                 labelId="label-salesman"
-                value={formik.values.salesman}
+                value={loguedUser.name}
                 name="salesman"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 variant="outlined"
+                disabled
               >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-
-
+              </TextField>
 
               <ProductsList
-                products={formik.values.products}
+                products={products}
                 headLabels={["Producto", "Cantidad", "Precio", "Total", "Eliminar", "Editar"]}
+                productsFields={["name", "quantity", "typePrice", "total"]}
                 page={pageProducts}
                 handlePageChange={handlePageChangeProducts}
               ></ProductsList>
               <Box sx={{ py: 2, display: "flex", justifyContent: "flex-end", width: "100%" }}>
                 <IconButton
+                  onClick={() => {
+                    setOpenModal(true);
+                  }}
                 >
-                <AddCircleIcon/>
+                  <AddCircleIcon />
                 </IconButton>
               </Box>
 
@@ -193,6 +192,17 @@ const SaleRegister = () => {
                 >
                   Registrar Venta
                 </Button>
+
+                {openModal && (
+                  <FormSalesProductsModal
+                    open={openModal}
+                    handleClose={() => {
+                      setOpenModal(false);
+                    }}
+                    cartProducts={products}
+                    setCartProducts={setProducts}
+                  ></FormSalesProductsModal>
+                )}
               </Box>
             </form>
           </Container>
