@@ -27,13 +27,13 @@ const items = [
   {
     href: "/client_register",
     icon: <UsersIcon fontSize="small" />,
-    title: "Clientes",
+    title: "Registrar Cliente",
     admin: false,
   },
   {
     href: "/sale_register",
     icon: <ShoppingBagIcon fontSize="small" />,
-    title: "Ventas",
+    title: "Registrar Ventas",
     admin: false,
   },
   {
@@ -43,14 +43,14 @@ const items = [
     admin: false,
   },
   {
-    href: "/",
+    href: "/products_list",
     icon: <UsersIcon fontSize="small" />,
     title: "Lista Productos",
     admin: false,
   },
   {
     href: "/",
-    icon: <UsersIcon fontSize="small" />,
+    icon: <ShoppingBagIcon fontSize="small" />,
     title: "Lista De Ventas",
     admin: false,
   },  {
