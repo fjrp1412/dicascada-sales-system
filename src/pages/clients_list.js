@@ -19,58 +19,43 @@ import {
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { AppContext } from "../context/AppContext";
 import { DashboardLayout } from "../components/dashboard-layout";
-import { getProducts } from "../utils/api/products";
+import { getClients } from "../utils/api/clients";
 import { SeverityPill } from "../components/severity-pill";
 
-const SalesList = (props) => {
-  const { token, sales, setSales } = useContext(AppContext);
+const ClientsList = (props) => {
+  const { token, clients, setClients } = useContext(AppContext);
   const [page, setPage] = useState(0);
 
   const handlePageChange = async (event, newPage) => {
-    const newUrl = newPage > page ? sales.next : sales.previous;
+    const newUrl = newPage > page ? clients.next : clients.previous;
     setPage(newPage);
-    const { data, request } = await getProducts(token, newUrl);
-    setSales(data);
+    const { data, request } = await getClients(token, newUrl);
+    setClients(data);
   };
 
   return (
     <DashboardLayout>
       <Card {...props}>
-        <CardHeader title="Lista de Ventas" />
+        <CardHeader title="Lista de Clientes" />
         <Box sx={{ width: "100%" }}>
           <TableContainer sx={{ maxHeight: "100%", width: "100%" }}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Factura</TableCell>
-                  <TableCell>Fecha</TableCell>
-                  <TableCell>Monto</TableCell>
-                  <TableCell>Vendedor</TableCell>
-                  <TableCell>Cliente</TableCell>
-                  <TableCell>Estado</TableCell>
+                  <TableCell>Nombre</TableCell>
+                  <TableCell>Cedula o Rif</TableCell>
+                  <TableCell>Numero de tlf</TableCell>
+                  <TableCell>Direccion</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {sales.results &&
-                  sales.results.map((sale) => (
-                    <TableRow hover key={sale.id}>
-                      <TableCell>{sale.id}</TableCell>
-                      <TableCell>{sale.date}</TableCell>
-                      <TableCell>{sale.income}</TableCell>
-                      <TableCell>{sale.salesman.name}</TableCell>
-                      <TableCell>{sale.client.name}</TableCell>
-                      <TableCell>
-                      <SeverityPill
-                        color={
-                          (sale.status === "delivered" && "success") ||
-                          (sale.status === "refunded" && "error") ||
-                          "warning"
-                        }
-                      >
-                      {sale.status}
-
-</SeverityPill>
-                      </TableCell>
+                {clients.results &&
+                  clients.results.map((client) => (
+                    <TableRow hover key={client.id}>
+                      <TableCell>{client.name}</TableCell>
+                      <TableCell>{client.identity_card}</TableCell>
+                      <TableCell>{client.phone}</TableCell>
+                      <TableCell>{client.address}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
@@ -78,7 +63,7 @@ const SalesList = (props) => {
                 <TableRow>
                   <TablePagination
                     colSpan={3}
-                    count={sales.count}
+                    count={clients.count}
                     rowsPerPage={100}
                     onPageChange={handlePageChange}
                     page={page}
@@ -106,4 +91,4 @@ const SalesList = (props) => {
   );
 };
 
-export default SalesList;
+export default ClientsList;

@@ -54,7 +54,7 @@ const items = [
     title: "Lista De Ventas",
     admin: false,
   },  {
-    href: "/",
+    href: "/clients_list",
     icon: <UsersIcon fontSize="small" />,
     title: "Lista De Clientes",
     admin: false,
