@@ -55,7 +55,7 @@ const MonthSalesChart = () => (
             VENTAS DEL MES
           </Typography>
         <LineChart
-          width={1400}
+          width={1000}
           height={500}
           data={data}
           margin={{

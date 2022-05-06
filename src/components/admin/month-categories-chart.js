@@ -67,7 +67,7 @@ const MonthCategoriesChart = () => {
             VOLUMEN POR CATEGORIAS
           </Typography>
         <BarChart
-          width={1400}
+          width={1000}
           height={500}
           data={data}
           margin={{
