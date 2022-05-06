@@ -1,10 +1,6 @@
-import { useRef, useState, useEffect } from 'react';
-import { format } from "date-fns";
-import { v4 as uuid } from "uuid";
-import PerfectScrollbar from "react-perfect-scrollbar";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Box,
-  Button,
   Card,
   CardHeader,
   Table,
@@ -12,70 +8,96 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TableSortLabel,
-  Tooltip,
   TableFooter,
   TablePagination,
   TableContainer,
 } from "@mui/material";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import { SeverityPill } from "../severity-pill";
+import { AppContext } from "../context/AppContext";
+import { getSalesmans } from "../utils/api/salesman";
+import { DashboardLayout } from "../components/dashboard-layout";
 
-export const SalesmanList = (props) => {
- const {clients, handlePageChange, page } = props;
+const SalesmanList = (props) => {
+  const { token } = useContext(AppContext);
+  const [salesmans, setSalesmans] = useState(null);
+  const [page, setPage] = useState(0);
+
+  useEffect(async () => {
+    if (!salesmans) {
+      const { data, request } = await getSalesmans(token, null);
+      if (request.ok) {
+        setSalesmans(data);
+      }
+    }
+  }, [token]);
+
+  const handlePageChange = async (event, newPage) => {
+    setPage(newPage);
+    const newUrl = newPage > pageSales ? sales.next : sales.previous;
+
+    const { data, request } = await getSalesmans(token, newUrl);
+    setSalesmans(data);
+  };
 
   return (
-    <Card {...props}>
-      <CardHeader title="Lista de Clientes" />
-        <Box sx={{ minWidth: 320 }}>
-        <TableContainer sx={{ maxHeight: 600, minWidth: 320 }} >
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Cliente</TableCell>
-                <TableCell>Cedula/rif</TableCell>
-                <TableCell>Tlf</TableCell>
-                <TableCell>Direccion</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {clients.results.map((client) => (
-                <TableRow hover key={client.id}>
-                  <TableCell>{client.name}</TableCell>
-                  <TableCell>{client.identity_card}</TableCell>
-                  <TableCell>{client.phone === "nan" ? "" : client.phone}</TableCell>
-                  <TableCell>{client.address === "nan" ? "" : client.address}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  colSpan={3}
-                  count={clients.count}
-                  rowsPerPage={100}
-                  onPageChange={handlePageChange}
-                  page={page}
-                  SelectProps={{
-                    inputProps: {
-                      "aria-label": "rows per page",
-                    },
-                    native: true,
-                  }}
-                />
-              </TableRow>
-            </TableFooter>
-          </Table>
-          </TableContainer>
-        </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          p: 2,
-        }}
-      >
-      </Box>
-    </Card>
+    <>
+      <DashboardLayout>
+        <Card {...props}>
+          <CardHeader title="Lista de Vendedores" />
+          <Box sx={{ minWidth: 320 }}>
+            <TableContainer sx={{ maxHeight: 600, minWidth: 320 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Cliente</TableCell>
+                    <TableCell>Cedula/rif</TableCell>
+                    <TableCell>Tlf</TableCell>
+                    <TableCell>Direccion</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {salesmans &&
+                    salesmans.results.map((salesman) => (
+                      <TableRow hover key={salesman.id}>
+                        <TableCell>{salesman.name}</TableCell>
+                        <TableCell>{salesman.identity_card}</TableCell>
+                        <TableCell>{salesman.phone === "nan" ? "" : salesman.phone}</TableCell>
+                        <TableCell>{salesman.address === "nan" ? "" : salesman.address}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    {salesmans && (
+                      <TablePagination
+                        colSpan={3}
+                        count={salesmans.count}
+                        rowsPerPage={100}
+                        onPageChange={handlePageChange}
+                        page={page}
+                        SelectProps={{
+                          inputProps: {
+                            "aria-label": "rows per page",
+                          },
+                          native: true,
+                        }}
+                      />
+                    )}
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </TableContainer>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              p: 2,
+            }}
+          ></Box>
+        </Card>
+      </DashboardLayout>
+    </>
   );
 };
+
+export default SalesmanList;
