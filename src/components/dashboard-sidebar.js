@@ -49,7 +49,7 @@ const items = [
     admin: false,
   },
   {
-    href: "/",
+    href: "/sales_list",
     icon: <ShoppingBagIcon fontSize="small" />,
     title: "Lista De Ventas",
     admin: false,
