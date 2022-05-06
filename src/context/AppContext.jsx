@@ -6,11 +6,12 @@ const AppProvider = ({ children }) => {
   const [token, setToken] = useState("");
   const [value, setValue] = useState({});
   const [isAdmin, setIsAdmin] = useState(false);
-  const [globalSales, setGlobalSales] = useState([]);
-  const [userSales, setUserSales] = useState([]);
-  const [products, setProducts] = useState([]);
+  const [sales, setSales] = useState(null);
+  const [userSales, setUserSales] = useState(null);
+  const [products, setProducts] = useState(null);
   const [clients, setClients] = useState(null);
   const [loguedUser, setLoguedUser] = useState(null);
+  const [salesmans, setSalesmans] = useState(null);
 
   useEffect(() => {
     setValue({
@@ -18,8 +19,8 @@ const AppProvider = ({ children }) => {
       setToken,
       isAdmin,
       setIsAdmin,
-      globalSales,
-      setGlobalSales,
+      sales,
+      setSales,
       userSales,
       setUserSales,
       products,
@@ -28,8 +29,10 @@ const AppProvider = ({ children }) => {
       setClients,
       loguedUser,
       setLoguedUser,
+      salesmans,
+      setSalesmans
     });
-  }, [token, isAdmin, globalSales, userSales, products, clients, loguedUser]);
+  }, [token, isAdmin, sales, userSales, products, clients, loguedUser, salesmans]);
 
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

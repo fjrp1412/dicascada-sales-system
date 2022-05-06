@@ -28,6 +28,7 @@ const DashboardSalesman = ({
   handlePageChangeSales,
   handlePageChangeProducts,
   handlePageChangeClients,
+  user,
 }) => {
   return (
     <>
@@ -45,10 +46,10 @@ const DashboardSalesman = ({
           <Container maxWidth={false}>
             <Grid container spacing={3}>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <Budget />
+                <Budget purchases={120} />
               </Grid>
               <Grid item xl={3} lg={3} sm={6} xs={12}>
-                <TotalCustomers />
+                <TotalCustomers biggestSale={"0003200"} />
               </Grid>
               <Grid item xl={3} lg={3} sm={6} xs={12}>
                 <TasksProgress />
@@ -56,7 +57,7 @@ const DashboardSalesman = ({
               <Grid item lg={12} md={12} xl={9} xs={12}>
                 {sales && (
                   <LatestOrders
-                    orders={sales}
+                    sales={sales}
                     handlePageChange={handlePageChangeSales}
                     page={pageSales}
                   />

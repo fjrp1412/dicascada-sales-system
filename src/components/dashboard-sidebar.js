@@ -25,15 +25,9 @@ const items = [
     admin: false,
   },
   {
-    href: "/new-client",
+    href: "/client_register",
     icon: <UsersIcon fontSize="small" />,
     title: "Clientes",
-    admin: false,
-  },
-  {
-    href: "/products",
-    icon: <MenuIcon fontSize="small" />,
-    title: "Productos",
     admin: false,
   },
   {
@@ -43,9 +37,26 @@ const items = [
     admin: false,
   },
   {
-    href: "/sale_register",
+    href: "/salesman_list",
     icon: <UsersIcon fontSize="small" />,
-    title: "Vendedores",
+    title: "Lista Vendedores",
+    admin: false,
+  },
+  {
+    href: "/",
+    icon: <UsersIcon fontSize="small" />,
+    title: "Lista Productos",
+    admin: false,
+  },
+  {
+    href: "/",
+    icon: <UsersIcon fontSize="small" />,
+    title: "Lista De Ventas",
+    admin: false,
+  },  {
+    href: "/",
+    icon: <UsersIcon fontSize="small" />,
+    title: "Lista De Clientes",
     admin: false,
   },
 ];

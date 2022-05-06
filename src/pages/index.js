@@ -9,8 +9,19 @@ import { DashboardAdmin } from "../components/admin/dashboard-admin";
 import { DashboardSalesman } from "../components/salesman/dashboard-salesman";
 
 const Dashboard = () => {
-  const { token, isAdmin, clients, setClients, products, setProducts, loguedUser, setLoguedUser } = useContext(AppContext);
-  const [sales, setSales] = useState(null);
+  const {
+    token,
+    isAdmin,
+    clients,
+    setClients,
+    products,
+    setProducts,
+    loguedUser,
+    setLoguedUser,
+    sales,
+    setSales,
+  } = useContext(AppContext);
+
   const [pageSales, setPageSales] = useState(0);
   const [pageProducts, setPageProducts] = useState(0);
   const [pageClients, setPageClients] = useState(0);
@@ -18,26 +29,31 @@ const Dashboard = () => {
   console.log(loguedUser);
 
   useEffect(async () => {
-    const { data, request } = await getSales(token, null);
-    if (request.ok) {
-      setSales(data);
+    if (!sales) {
+      const { data, request } = await getSales(token, null);
+      if (request.ok) {
+        setSales(data);
+      }
     }
   }, [token]);
 
   useEffect(async () => {
-    const { data, request } = await getProducts(token, null);
-    if (request.ok) {
-      setProducts(data);
+    if (!products) {
+      const { data, request } = await getProducts(token, null);
+      if (request.ok) {
+        setProducts(data);
+      }
     }
   }, [token]);
 
   useEffect(async () => {
-    const { data, request } = await getClients(token, null);
-    if (request.ok) {
-      setClients(data);
+    if (!clients) {
+      const { data, request } = await getClients(token, null);
+      if (request.ok) {
+        setClients(data);
+      }
     }
   }, [token]);
-
 
   const handlePageChangeSales = async (event, newPage) => {
     setPageSales(newPage);
@@ -60,21 +76,26 @@ const Dashboard = () => {
     setClients(data);
   };
 
-  return <>
-  {(isAdmin && <DashboardAdmin />) || (sales && products && clients && <DashboardSalesman 
-   token={token}
-    sales={sales}
-    pageSales={pageSales}
-    products={products}
-    pageProducts={pageProducts}
-    pageClients={pageClients}
-    clients={clients}
-    handlePageChangeSales={handlePageChangeSales}
-    handlePageChangeProducts={handlePageChangeProducts}
-    handlePageChangeClients={handlePageChangeClients}
-  />)
-  }
-  </>;
+  return (
+    <>
+      {(isAdmin && <DashboardAdmin />) ||
+        (sales && products && clients && (
+          <DashboardSalesman
+            token={token}
+            sales={sales}
+            pageSales={pageSales}
+            products={products}
+            pageProducts={pageProducts}
+            pageClients={pageClients}
+            clients={clients}
+            handlePageChangeSales={handlePageChangeSales}
+            handlePageChangeProducts={handlePageChangeProducts}
+            handlePageChangeClients={handlePageChangeClients}
+            user={loguedUser}
+          />
+        ))}
+    </>
+  );
 };
 
 export default Dashboard;
