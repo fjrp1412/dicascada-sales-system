@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
+import { useRouter } from "next/router";
 import {
   Box,
   Button,
@@ -24,6 +25,14 @@ import { getProducts } from "../utils/api/products";
 const ProductsList = (props) => {
   const { token, products, setProducts } = useContext(AppContext);
   const [page, setPage] = useState(0);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!token) {
+      router.push("/login");
+    }
+  }, []);
 
   const handlePageChange = async (event, newPage) => {
     const newUrl = newPage > page ? products.next : products.previous;
@@ -51,7 +60,7 @@ const ProductsList = (props) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {products.results &&
+                {products &&
                   products.results.map((product) => (
                     <TableRow hover key={product.id}>
                       <TableCell>{product.name}</TableCell>
@@ -66,19 +75,21 @@ const ProductsList = (props) => {
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TablePagination
-                    colSpan={3}
-                    count={-1}
-                    rowsPerPage={100}
-                    onPageChange={handlePageChange}
-                    page={page}
-                    SelectProps={{
-                      inputProps: {
-                        "aria-label": "rows per page",
-                      },
-                      native: true,
-                    }}
-                  />
+                  {products && (
+                    <TablePagination
+                      colSpan={3}
+                      count={products.count}
+                      rowsPerPage={100}
+                      onPageChange={handlePageChange}
+                      page={page}
+                      SelectProps={{
+                        inputProps: {
+                          "aria-label": "rows per page",
+                        },
+                        native: true,
+                      }}
+                    />
+                  )}
                 </TableRow>
               </TableFooter>
             </Table>

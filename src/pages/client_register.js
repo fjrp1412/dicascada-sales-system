@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
-import Head from "next/head";
 import { useRouter } from "next/router";
+import Head from "next/head";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
@@ -24,7 +24,15 @@ import { getProducts } from "../utils/api/products";
 import { FormSalesProductsModal } from "../components/sales/form-products-modal";
 
 const ClientRegister = () => {
+  const { token } = useContext(AppContext);
+
   const router = useRouter();
+  useEffect(() =>{
+  if(!token) {
+    router.push("/login");
+  }
+
+  }, [])
 
   const formik = useFormik({
     initialValues: {

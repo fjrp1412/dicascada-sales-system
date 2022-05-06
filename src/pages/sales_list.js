@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {
   Box,
@@ -26,6 +27,14 @@ const SalesList = (props) => {
   const { token, sales, setSales } = useContext(AppContext);
   const [page, setPage] = useState(0);
 
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!token) {
+      router.push("/login");
+    }
+  }, []);
+
   const handlePageChange = async (event, newPage) => {
     const newUrl = newPage > page ? sales.next : sales.previous;
     setPage(newPage);
@@ -51,7 +60,7 @@ const SalesList = (props) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {sales.results &&
+                {sales &&
                   sales.results.map((sale) => (
                     <TableRow hover key={sale.id}>
                       <TableCell>{sale.id}</TableCell>
@@ -60,35 +69,36 @@ const SalesList = (props) => {
                       <TableCell>{sale.salesman.name}</TableCell>
                       <TableCell>{sale.client.name}</TableCell>
                       <TableCell>
-                      <SeverityPill
-                        color={
-                          (sale.status === "delivered" && "success") ||
-                          (sale.status === "refunded" && "error") ||
-                          "warning"
-                        }
-                      >
-                      {sale.status}
-
-</SeverityPill>
+                        <SeverityPill
+                          color={
+                            (sale.status === "delivered" && "success") ||
+                            (sale.status === "refunded" && "error") ||
+                            "warning"
+                          }
+                        >
+                          {sale.status}
+                        </SeverityPill>
                       </TableCell>
                     </TableRow>
                   ))}
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TablePagination
-                    colSpan={3}
-                    count={sales.count}
-                    rowsPerPage={100}
-                    onPageChange={handlePageChange}
-                    page={page}
-                    SelectProps={{
-                      inputProps: {
-                        "aria-label": "rows per page",
-                      },
-                      native: true,
-                    }}
-                  />
+                  {sales && (
+                    <TablePagination
+                      colSpan={3}
+                      count={sales.count}
+                      rowsPerPage={100}
+                      onPageChange={handlePageChange}
+                      page={page}
+                      SelectProps={{
+                        inputProps: {
+                          "aria-label": "rows per page",
+                        },
+                        native: true,
+                      }}
+                    />
+                  )}
                 </TableRow>
               </TableFooter>
             </Table>

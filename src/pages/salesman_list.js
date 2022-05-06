@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import { useRouter } from "next/router";
 import {
   Box,
   Card,
@@ -20,6 +21,16 @@ const SalesmanList = (props) => {
   const { token } = useContext(AppContext);
   const [salesmans, setSalesmans] = useState(null);
   const [page, setPage] = useState(0);
+
+  const router = useRouter();
+
+  useEffect(() =>{
+  if(!token) {
+    router.push("/login");
+  }
+
+  }, [])
+
 
   useEffect(async () => {
     if (!salesmans) {

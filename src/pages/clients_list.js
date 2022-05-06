@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {
   Box,
@@ -25,6 +26,13 @@ import { SeverityPill } from "../components/severity-pill";
 const ClientsList = (props) => {
   const { token, clients, setClients } = useContext(AppContext);
   const [page, setPage] = useState(0);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!token) {
+      router.push("/login");
+    }
+  }, []);
 
   const handlePageChange = async (event, newPage) => {
     const newUrl = newPage > page ? clients.next : clients.previous;
@@ -49,7 +57,7 @@ const ClientsList = (props) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {clients.results &&
+                {clients &&
                   clients.results.map((client) => (
                     <TableRow hover key={client.id}>
                       <TableCell>{client.name}</TableCell>
@@ -61,19 +69,21 @@ const ClientsList = (props) => {
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TablePagination
-                    colSpan={3}
-                    count={clients.count}
-                    rowsPerPage={100}
-                    onPageChange={handlePageChange}
-                    page={page}
-                    SelectProps={{
-                      inputProps: {
-                        "aria-label": "rows per page",
-                      },
-                      native: true,
-                    }}
-                  />
+                  {clients && (
+                    <TablePagination
+                      colSpan={3}
+                      count={clients.count}
+                      rowsPerPage={100}
+                      onPageChange={handlePageChange}
+                      page={page}
+                      SelectProps={{
+                        inputProps: {
+                          "aria-label": "rows per page",
+                        },
+                        native: true,
+                      }}
+                    />
+                  )}
                 </TableRow>
               </TableFooter>
             </Table>

@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useState, useEffect, useContext } from "react";
 import { AppContext } from "src/context/AppContext";
 import { getSales } from "../utils/api/sales";
@@ -25,6 +26,15 @@ const Dashboard = () => {
   const [pageSales, setPageSales] = useState(0);
   const [pageProducts, setPageProducts] = useState(0);
   const [pageClients, setPageClients] = useState(0);
+  const router = useRouter();
+
+  useEffect(() =>{
+  if(!token) {
+    router.push("/login");
+  }
+
+  }, [])
+
 
   console.log(loguedUser);
 
