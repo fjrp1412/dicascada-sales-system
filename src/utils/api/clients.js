@@ -19,4 +19,34 @@ const getClients = async (token, nextUrl) => {
   }
 };
 
-export { getClients };
+const getClient = async (token, id) => {
+  const url = `${BASE_URL + `client/${id}/`}`;
+  try {
+    const request = await fetch(url, {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+    const data = await request.json();
+    return { request, data };
+  } catch (e) {
+    return { request: { ok: false, message: e.message } };
+  }
+} 
+
+const getClientIndicator = async (token, id) => {
+  const url = `${BASE_URL + `client/indicator/${id}`}`;
+  try {
+    const request = await fetch(url, {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+    const data = await request.json();
+    return { request, data };
+  } catch (e) {
+    return { request: { ok: false, message: e.message } };
+  }
+}
+
+export { getClients, getClient, getClientIndicator  };

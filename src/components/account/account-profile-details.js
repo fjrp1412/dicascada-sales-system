@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -10,37 +10,17 @@ import {
   TextField
 } from '@mui/material';
 
-const states = [
-  {
-    value: 'alabama',
-    label: 'Alabama'
-  },
-  {
-    value: 'new-york',
-    label: 'New York'
-  },
-  {
-    value: 'san-francisco',
-    label: 'San Francisco'
-  }
-];
-
 export const AccountProfileDetails = (props) => {
   const [values, setValues] = useState({
-    firstName: 'Katarina',
-    lastName: 'Smith',
-    email: 'demo@devias.io',
-    phone: '',
-    state: 'Alabama',
-    country: 'USA'
+    name: '',
+    phone: '', 
+    address: '',
+    identity_card: '',
   });
 
-  const handleChange = (event) => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value
-    });
-  };
+  useEffect(()  => {
+    setValues({...props.client});
+  }, []);
 
   return (
     <form
@@ -50,8 +30,8 @@ export const AccountProfileDetails = (props) => {
     >
       <Card>
         <CardHeader
-          subheader="The information can be edited"
-          title="Profile"
+          subheader="La informacion puede ser editada"
+          title="Perfil de cliente"
         />
         <Divider />
         <CardContent>
@@ -66,15 +46,16 @@ export const AccountProfileDetails = (props) => {
             >
               <TextField
                 fullWidth
-                helperText="Please specify the first name"
-                label="First name"
-                name="firstName"
-                onChange={handleChange}
+                helperText="Especificar el nombre del cliente"
+                label="Name"
+                name="Name"
                 required
-                value={values.firstName}
+                value={values.name}
                 variant="outlined"
               />
             </Grid>
+
+
             <Grid
               item
               md={6}
@@ -82,40 +63,8 @@ export const AccountProfileDetails = (props) => {
             >
               <TextField
                 fullWidth
-                label="Last name"
-                name="lastName"
-                onChange={handleChange}
-                required
-                value={values.lastName}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Email Address"
-                name="email"
-                onChange={handleChange}
-                required
-                value={values.email}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Phone Number"
+                label="Numero de telefono"
                 name="phone"
-                onChange={handleChange}
-                type="number"
                 value={values.phone}
                 variant="outlined"
               />
@@ -127,11 +76,10 @@ export const AccountProfileDetails = (props) => {
             >
               <TextField
                 fullWidth
-                label="Country"
-                name="country"
-                onChange={handleChange}
+                label="Cedula o Rif"
+                name="identity_card"
                 required
-                value={values.country}
+                value={values.identity_card}
                 variant="outlined"
               />
             </Grid>
@@ -142,23 +90,12 @@ export const AccountProfileDetails = (props) => {
             >
               <TextField
                 fullWidth
-                label="Select State"
-                name="state"
-                onChange={handleChange}
+                label="Direccion"
+                name="address"
                 required
-                select
-                SelectProps={{ native: true }}
-                value={values.state}
+                value={values.address}
                 variant="outlined"
               >
-                {states.map((option) => (
-                  <option
-                    key={option.value}
-                    value={option.value}
-                  >
-                    {option.label}
-                  </option>
-                ))}
               </TextField>
             </Grid>
           </Grid>
@@ -175,7 +112,7 @@ export const AccountProfileDetails = (props) => {
             color="primary"
             variant="contained"
           >
-            Save details
+            Editar detalles
           </Button>
         </Box>
       </Card>

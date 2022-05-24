@@ -71,7 +71,10 @@ const ClientsList = (props) => {
               <TableBody>
                 {clients &&
                   clients.results.map((client) => (
-                    <TableRow hover key={client.id}>
+                    <TableRow hover 
+                    key={client.id}
+                    onClick={() => router.push(`/client_detail/${client.id}`)}
+                    >
                       <TableCell>{client.name}</TableCell>
                       <TableCell>{client.identity_card}</TableCell>
                       <TableCell>{client.phone}</TableCell>
