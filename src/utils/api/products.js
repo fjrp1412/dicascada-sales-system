@@ -1,4 +1,4 @@
-const BASE_URL = "https://lambda-sales-api.azurewebsites.net/api/";
+const BASE_URL = "https://lambdaapi.azurewebsites.net/api/";
 
 const getProducts = async (token, nextUrl) => {
   console.log(nextUrl)

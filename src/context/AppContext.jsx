@@ -12,6 +12,7 @@ const AppProvider = ({ children }) => {
   const [clients, setClients] = useState(null);
   const [loguedUser, setLoguedUser] = useState(null);
   const [salesmans, setSalesmans] = useState(null);
+  const [salesCount, setSalesCount] = useState(null);
 
   useEffect(() => {
     setValue({
@@ -30,9 +31,11 @@ const AppProvider = ({ children }) => {
       loguedUser,
       setLoguedUser,
       salesmans,
-      setSalesmans
+      setSalesmans,
+      salesCount,
+      setSalesCount,
     });
-  }, [token, isAdmin, sales, userSales, products, clients, loguedUser, salesmans]);
+  }, [token, isAdmin, sales, userSales, products, clients, loguedUser, salesmans, salesCount]);
 
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

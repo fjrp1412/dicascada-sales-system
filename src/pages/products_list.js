@@ -34,6 +34,19 @@ const ProductsList = (props) => {
     }
   }, []);
 
+  useEffect(() => {
+    async function fetchData() {
+      const { data, request } = await getProducts(token, null);
+      if (request.ok) {
+        setProducts(data);
+      }
+    }
+
+    if (!products) {
+      fetchData();
+    }
+  }, [token]);
+
   const handlePageChange = async (event, newPage) => {
     const newUrl = newPage > page ? products.next : products.previous;
     setPage(newPage);

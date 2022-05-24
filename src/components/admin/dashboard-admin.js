@@ -13,7 +13,7 @@ import { TotalProfit } from "../dashboard/total-profit";
 import { TrafficByDevice } from "../dashboard/traffic-by-device";
 import { DashboardLayout } from "../dashboard-layout";
 import { AppContext } from "../../context/AppContext";
-import { getSales } from "../../utils/api/sales";
+import { getSales, getAllSales } from "../../utils/api/sales";
 import { getClients } from "../../utils/api/clients";
 import { getProducts } from "../../utils/api/products";
 import { ClientsList } from "../dashboard/clients-list";
@@ -22,13 +22,35 @@ import { MonthSalesChart } from "./month-sales-chart";
 import { MonthCategoriesChart } from "./month-categories-chart";
 
 const DashboardAdmin = () => {
-  const { token, globalSales, setGlobalSales } = useContext(AppContext);
-  const [sales, setSales] = useState(null);
-  const [pageSales, setPageSales] = useState(0);
-  const [products, setProducts] = useState(null);
-  const [pageProducts, setPageProducts] = useState(0);
-  const [pageClients, setPageClients] = useState(0);
-  const [clients, setClients] = useState(null);
+  const { token, sales, setSales, salesCount, setSalesCount } = useContext(AppContext);
+  const [allSales, setAllSales] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!sales) {
+        const { data, request } = await getSales(token, null);
+        if (request.ok) {
+          setSales(data);
+          setSalesCount(data.count);
+        }
+      }
+    }
+    fetchData();
+  }, [token]);
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!allSales) {
+        const { data, request } = await getAllSales(token, salesCount);
+        console.log(salesCount);
+        if (request.ok) {
+          setAllSales(data);
+        }
+      }
+    }
+
+    fetchData();
+  }, [salesCount, token]);
 
   return (
     <>
@@ -49,7 +71,7 @@ const DashboardAdmin = () => {
                 <MonthSales />
               </Grid>
               <Grid item xl={3} lg={3} sm={6} xs={12}>
-                <TotalCustomers biggestSale={"0001300"}/>
+                <TotalCustomers biggestSale={"0001300"} />
               </Grid>
               <Grid item xl={3} lg={3} sm={6} xs={12}>
                 <TasksProgress />

@@ -22,6 +22,7 @@ import { AppContext } from "../context/AppContext";
 import { DashboardLayout } from "../components/dashboard-layout";
 import { getProducts } from "../utils/api/products";
 import { SeverityPill } from "../components/severity-pill";
+import { getSales } from "../utils/api/sales";
 
 const SalesList = (props) => {
   const { token, sales, setSales } = useContext(AppContext);
@@ -34,6 +35,20 @@ const SalesList = (props) => {
       router.push("/login");
     }
   }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+        const { data, request } = await getSales(token, null);
+        if (request.ok) {
+          setSales(data);
+        }
+      }
+
+      if(!sales) {
+        fetchData();
+      }
+
+  }, [token])
 
   const handlePageChange = async (event, newPage) => {
     const newUrl = newPage > page ? sales.next : sales.previous;

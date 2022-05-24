@@ -18,18 +18,57 @@ import { getProducts } from "../../utils/api/products";
 import { ClientsList } from "../dashboard/clients-list";
 
 const DashboardSalesman = ({
-  token,
-  sales,
   pageSales,
-  products,
   pageProducts,
   pageClients,
-  clients,
   handlePageChangeSales,
   handlePageChangeProducts,
   handlePageChangeClients,
   user,
 }) => {
+
+  const {
+    token,
+    isAdmin,
+    clients,
+    setClients,
+    products,
+    setProducts,
+    loguedUser,
+    setLoguedUser,
+    sales,
+    setSales,
+    salesCount,
+    setSalesCount,
+  } = useContext(AppContext);
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!sales) {
+        const { data, request } = await getSales(token, null);
+        if (request.ok) {
+          setSales(data);
+          setSalesCount(data.count);
+        }
+      }
+      if (!products) {
+        const { data, request } = await getProducts(token, null);
+        if (request.ok) {
+          setProducts(data);
+        }
+      }
+      if (!clients) {
+        const { data, request } = await getClients(token, null);
+        if (request.ok) {
+          setClients(data);
+        }
+      }
+
+    }
+    fetchData();
+  }, [token]);
+
+
   return (
     <>
       <DashboardLayout>

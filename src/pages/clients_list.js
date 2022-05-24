@@ -34,6 +34,18 @@ const ClientsList = (props) => {
     }
   }, []);
 
+  useEffect(() => {
+    async function fetchData() {
+      const { data, request } = await getClients(token, null);
+      if (request.ok) {
+        setClients(data);
+      }
+    }
+    if (!clients) {
+      fetchData();
+    }
+  }, [token]);
+
   const handlePageChange = async (event, newPage) => {
     const newUrl = newPage > page ? clients.next : clients.previous;
     setPage(newPage);
