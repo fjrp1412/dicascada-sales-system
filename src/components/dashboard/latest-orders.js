@@ -24,8 +24,6 @@ import { SeverityPill } from "../severity-pill";
 export const LatestOrders = (props) => {
   const { sales, handlePageChange, page } = props;
 
-  console.log(sales);
-
   return (
     <Card {...props}>
       <CardHeader title="Ventas" />

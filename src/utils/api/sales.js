@@ -1,8 +1,8 @@
 const BASE_URL = "https://lambdaapi.azurewebsites.net/api/";
 
-const getSales = async (token, nextUrl) => {
+const getSales = async (token, nextUrl, query) => {
   console.log(nextUrl)
-  const url = `${nextUrl ? nextUrl : BASE_URL + `sale/`  }`;
+  const url = `${nextUrl ? nextUrl : BASE_URL + `sale/?${query}`   }`;
   try {
     const request = await fetch(url, {
       headers: {
