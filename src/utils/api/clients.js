@@ -11,7 +11,6 @@ const getClients = async (token, nextUrl) => {
     });
     const data = await request.json();
 
-    console.log(data)
 
     return { request, data };
   } catch (e) {
@@ -43,7 +42,6 @@ const getClientIndicator = async (token, id) => {
       },
     });
     const data = await request.json();
-    console.log('indicator', data);
     return { request, data };
   } catch (e) {
     return { request: { ok: false, message: e.message } };
@@ -57,7 +55,6 @@ const getClientStatistic = async (token, id, type) => {
     'type': type,
   }
 
-  console.log(body);
   try {
     const request = await fetch(url, {
       method: "POST",
@@ -70,7 +67,7 @@ const getClientStatistic = async (token, id, type) => {
     const data = await request.json();
 
     console.log(data);
-    console.log('request'. request);
+
     return { request, data };
   } catch (e) {
     return { request: { ok: false, message: e.message } };
@@ -94,8 +91,6 @@ const getClientIA = async (token, id, income) => {
     });
     const data = await request.json();
 
-    console.log(data);
-    console.log('request'. request);
     return { request, data };
   } catch (e) {
     return { request: { ok: false, message: e.message } };

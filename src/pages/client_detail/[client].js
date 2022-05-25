@@ -9,7 +9,12 @@ import { LatestOrders } from "../../components/dashboard/latest-orders";
 import { DashboardLayout } from "../../components/dashboard-layout";
 import { AccountProfile } from "../../components/account/account-profile";
 import { AccountProfileDetails } from "../../components/account/account-profile-details";
-import { getClient, getClientIndicator, getClientStatistic, getClientIA } from "../../utils/api/clients";
+import {
+  getClient,
+  getClientIndicator,
+  getClientStatistic,
+  getClientIA,
+} from "../../utils/api/clients";
 import { getSales } from "../../utils/api/sales";
 import { AppContext } from "../../context/AppContext";
 import { BarChartWithTable } from "../../components/charts/BarChartWithTable";
@@ -23,6 +28,20 @@ const ClientDetail = () => {
   const [clientSales, setClientSales] = useState(null);
   const [page, setPage] = useState(0);
   const [income, setIncome] = useState(null);
+  const [statisticType, setStatisticType] = useState("salesman");
+  const [variable, setVariable] = useState("count");
+  const options = {
+    salesman: "salesman",
+    category: "categories",
+    product: "products",
+  };
+
+  const handleChangeStatistic = (event) => {
+    setStatisticType(event.target.value);
+  };
+  const handleChangeVariable = (event) => {
+    setVariable(event.target.value);
+  };
 
   const handlePageChange = async (event, newPage) => {
     setPage(newPage);
@@ -30,7 +49,6 @@ const ClientDetail = () => {
     const { data, request } = await getSales(token, newUrl, `client=${router.query.client}`);
     setClientSales(data);
   };
-
 
   useEffect(() => {
     if (!token) {
@@ -54,24 +72,23 @@ const ClientDetail = () => {
     async function fetchData() {
       const { data, request } = await getClientIndicator(token, router.query.client);
       if (request.ok) {
-        setIndicator({...data});
+        setIndicator({ ...data });
       }
-
-
     }
     fetchData();
   }, [client]);
 
   useEffect(() => {
     async function fetchData() {
-      const { data, request } = await getClientStatistic(token, router.query.client, 'salesman');
+      const { data, request } = await getClientStatistic(token, router.query.client, statisticType);
       if (request.ok) {
-          setStatistic({salesman: data});
+        const aux = data[router.query.client];
+        const option = options[statisticType];
+        setStatistic({ statistic: Object.values(aux[option]) });
       }
     }
     fetchData();
-  }, []);
-
+  }, [token, statisticType]);
 
   useEffect(() => {
     async function fetchData() {
@@ -81,8 +98,7 @@ const ClientDetail = () => {
       }
     }
     fetchData();
-  }, [])
-
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -92,9 +108,7 @@ const ClientDetail = () => {
       }
     }
     fetchData();
-  }, [])
-
-
+  }, []);
 
   return (
     <DashboardLayout>
@@ -121,12 +135,17 @@ const ClientDetail = () => {
                 <StatisticPanel value={`# ${indicator.biggest_sale}`} title="Compras mas alta" />
               </Grid>{" "}
               <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <StatisticPanel value={`${indicator.money_generated}$`} title="Ingresos generados" />
+                <StatisticPanel
+                  value={`${indicator.money_generated}$`}
+                  title="Ingresos generados"
+                />
               </Grid>{" "}
               <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <StatisticPanel value={`${Math.round(income * 100) / 100}$`} title="Proyeccion monto siguiente compra" />
+                <StatisticPanel
+                  value={`${Math.round(income * 100) / 100}$`}
+                  title="Proyeccion monto siguiente compra"
+                />
               </Grid>
-
               <Grid item lg={4} md={6} xs={12}>
                 <AccountProfile />
               </Grid>
@@ -141,14 +160,18 @@ const ClientDetail = () => {
                     page={page}
                   />
                 ) : (
-          <Skeleton variant="rectangular" width={210} height={118} />
+                  <Skeleton variant="rectangular" width={210} height={118} />
                 )}
               </Grid>
-
-              <Grid item lg={8} md={6} xs={12}>
-                <BarChartWithTable/>
+              <Grid item lg={12} md={12} xl={9} xs={12}>
+                <BarChartWithTable
+                  values={statistic}
+                  handleChange={handleChangeStatistic}
+                  statistic={statisticType}
+                  handleChangeVariable={handleChangeVariable}
+                  variable={variable}
+                />
               </Grid>
-
             </Grid>
           </Container>
         </Box>

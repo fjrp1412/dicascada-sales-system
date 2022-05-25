@@ -7,44 +7,96 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import {
+  BarChart,
+  Bar,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-];
-
-const BarChartWithTable = () => {
+const BarChartWithTable = ({ values, handleChange, statistic, variable, handleChangeVariable }) => {
+  console.log("values", values);
   return (
-    <Grid container spacing={2}>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 200 }} aria-label="simple table">
+    <Grid
+      container
+      spacing={1}
+      sx={{
+        display: "flex",
+        justifyContent: "space-around",
+        padding: 3,
+        flexDirection: "column",
+      }}
+      component={Paper}
+    >
+      <Grid>
+        <Select value={statistic} onChange={handleChange} sx={{margin: 3}}>
+          <MenuItem value="salesman">Vendedor</MenuItem>
+          <MenuItem value="category">Categoria</MenuItem>
+          <MenuItem value="product">Producto</MenuItem>
+        </Select>
+        <Select value={variable} onChange={handleChangeVariable} sx={{margin: 3}}>
+          <MenuItem value="count">Volumen de ventas</MenuItem>
+          <MenuItem value="category">Ingresos totales generados</MenuItem>
+        </Select>
+      </Grid>
+      <TableContainer
+        sx={{
+          maxHeight: 600,
+          border: "1px solid #e0e0e0",
+        }}
+      >
+        <Table aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Dessert (100g serving)</TableCell>
-              <TableCell align="right">Calories</TableCell>
-              <TableCell align="right">Protein&nbsp;(g)</TableCell>
+              <TableCell align="center">Nombre</TableCell>
+              <TableCell align="center">Volumen de ventas</TableCell>
+              <TableCell align="center">Ingresos totales generados</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.name} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell align="right">{row.calories}</TableCell>
-                <TableCell align="right">{row.fat}</TableCell>
-              </TableRow>
-            ))}
+            {values &&
+              values.statistic.map((stat) => (
+                <TableRow
+                  key={stat.name}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell align="center">{stat.name}</TableCell>
+                  <TableCell align="center">{stat.count}</TableCell>
+                  <TableCell align="center">{Math.round(stat.total_income * 100) / 100}$</TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
+      {values && (
+        <ResponsiveContainer width="100%" height={500}>
+          <BarChart
+            width={500}
+            height={300}
+            data={values.statistic}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" hide />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey={variable} fill="#8884d8" maxBarSize={50} />
+          </BarChart>
+        </ResponsiveContainer>
+      )}
     </Grid>
   );
 };
