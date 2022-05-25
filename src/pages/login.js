@@ -23,6 +23,7 @@ const Login = () => {
       console.log(form);
       const { data, request } = await login({ form });
       const token = data.token;
+      window.localStorage.setItem("token", token);
       setToken(token);
       if (request.ok) {
         const { request, data } = await getMe({ token });

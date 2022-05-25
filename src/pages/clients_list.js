@@ -74,6 +74,7 @@ const ClientsList = (props) => {
                     <TableRow hover 
                     key={client.id}
                     onClick={() => router.push(`/client_detail/${client.id}`)}
+                    sx={{ cursor: "pointer" }}
                     >
                       <TableCell>{client.name}</TableCell>
                       <TableCell>{client.identity_card}</TableCell>

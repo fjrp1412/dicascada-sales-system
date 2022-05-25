@@ -21,7 +21,14 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const BarChartWithTable = ({ values, handleChange, statistic, variable, handleChangeVariable }) => {
+const BarChartWithTable = ({
+  options,
+  values,
+  handleChange,
+  statistic,
+  variable,
+  handleChangeVariable,
+}) => {
   console.log("values", values);
   return (
     <Grid
@@ -36,14 +43,16 @@ const BarChartWithTable = ({ values, handleChange, statistic, variable, handleCh
       component={Paper}
     >
       <Grid>
-        <Select value={statistic} onChange={handleChange} sx={{margin: 3}}>
-          <MenuItem value="salesman">Vendedor</MenuItem>
-          <MenuItem value="category">Categoria</MenuItem>
-          <MenuItem value="product">Producto</MenuItem>
+        <Select value={statistic} onChange={handleChange} sx={{ margin: 3 }}>
+          {options && Object.entries(options).map((option) => (
+            <MenuItem value={option[0]} key={option[0]}>
+              {option[1]}
+            </MenuItem>
+          ))}
         </Select>
-        <Select value={variable} onChange={handleChangeVariable} sx={{margin: 3}}>
+        <Select value={variable} onChange={handleChangeVariable} sx={{ margin: 3 }}>
           <MenuItem value="count">Volumen de ventas</MenuItem>
-          <MenuItem value="category">Ingresos totales generados</MenuItem>
+          <MenuItem value="total_income">Ingresos totales generados</MenuItem>
         </Select>
       </Grid>
       <TableContainer

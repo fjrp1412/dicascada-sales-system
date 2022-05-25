@@ -24,13 +24,11 @@ const SalesmanList = (props) => {
 
   const router = useRouter();
 
-  useEffect(() =>{
-  if(!token) {
-    router.push("/login");
-  }
-
-  }, [])
-
+  useEffect(() => {
+    if (!token) {
+      router.push("/login");
+    }
+  }, []);
 
   useEffect(async () => {
     if (!salesmans) {
@@ -59,8 +57,8 @@ const SalesmanList = (props) => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Cliente</TableCell>
-                    <TableCell>Cedula/rif</TableCell>
+                    <TableCell>Vendedor</TableCell>
+                    <TableCell>Cedula</TableCell>
                     <TableCell>Tlf</TableCell>
                     <TableCell>Direccion</TableCell>
                   </TableRow>
@@ -68,7 +66,12 @@ const SalesmanList = (props) => {
                 <TableBody>
                   {salesmans &&
                     salesmans.results.map((salesman) => (
-                      <TableRow hover key={salesman.id}>
+                      <TableRow
+                        hover
+                        key={salesman.id}
+                        sx={{ cursor: "pointer" }}
+                        onClick={() => router.push(`/salesman_detail/${salesman.id}`)}
+                      >
                         <TableCell>{salesman.name}</TableCell>
                         <TableCell>{salesman.identity_card}</TableCell>
                         <TableCell>{salesman.phone === "nan" ? "" : salesman.phone}</TableCell>
