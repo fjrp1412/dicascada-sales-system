@@ -41,4 +41,30 @@ const getAllSales = async (token, limit) => {
 
 }
 
-export { getSales, getAllSales };
+const getSalesIA = async (token, income, grouped_by, month) => {
+  const url = `${BASE_URL}sale/ia`;
+  const body = {
+    'income': income,
+    'grouped_by': grouped_by,
+    'month': month,
+  }
+    try {
+    const request = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await request.json();
+    console.log(data);
+
+    return { request, data };
+  } catch (e) {
+    return { request: { ok: false, message: e.message } };
+  }
+
+}
+
+export { getSales, getAllSales, getSalesIA };

@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Skeleton from "@mui/material/Skeleton";
 import { useState, useEffect, useContext } from "react";
 import { Box, Container, Grid } from "@mui/material";
 import { Budget } from "../dashboard/budget";
@@ -9,30 +10,38 @@ import { Sales } from "../dashboard/sales";
 import { TasksProgress } from "../dashboard/tasks-progress";
 import { TotalCustomers } from "../dashboard/total-customers";
 import { ProductsList } from "../dashboard/products-list";
-import { TotalProfit } from "../dashboard/total-profit";
 import { TrafficByDevice } from "../dashboard/traffic-by-device";
 import { DashboardLayout } from "../dashboard-layout";
 import { AppContext } from "../../context/AppContext";
-import { getSales, getAllSales } from "../../utils/api/sales";
+import { getSales, getSalesIA } from "../../utils/api/sales";
 import { getClients } from "../../utils/api/clients";
 import { getProducts } from "../../utils/api/products";
 import { ClientsList } from "../dashboard/clients-list";
 import { ComparativePercentagePanel } from "./comparative-percentage-panel";
 import { MonthSalesChart } from "./month-sales-chart";
-import { MonthCategoriesChart } from "./month-categories-chart";
+import { LineChartComponent } from "../charts/SalesBarChart";
+import { StatisticPanel } from "../statistics/statistic_panel";
 
 const DashboardAdmin = () => {
-  const { token, sales, setSales, salesCount, setSalesCount } = useContext(AppContext);
-  const [allSales, setAllSales] = useState(null);
+  const { token } = useContext(AppContext);
+  const [filteredDateSales, setFilteredDateSales] = useState(null);
+  const [page, setPage] = useState(0);
+  const [monthSales, setMonthSales] = useState(null);
+  const [predictedMonth, setPredictedMonth] = useState(null);
+
+
+  const handlePageChange = async (event, newPage) => {
+    setPage(newPage);
+    const newUrl = newPage > page ? filteredDateSales.next : filteredDateSales.previous;
+    const { data, request } = await getSales(token, newUrl);
+    setClientSales(data);
+  };
 
   useEffect(() => {
     async function fetchData() {
-      if (!sales) {
-        const { data, request } = await getSales(token, null);
-        if (request.ok) {
-          setSales(data);
-          setSalesCount(data.count);
-        }
+      const { data, request } = await getSalesIA(token, false, '', true)
+      if (request.ok) {
+        setPredictedMonth(data[0]);
       }
     }
     fetchData();
@@ -40,17 +49,19 @@ const DashboardAdmin = () => {
 
   useEffect(() => {
     async function fetchData() {
-      if (!allSales) {
-        const { data, request } = await getAllSales(token, salesCount);
-        console.log(salesCount);
-        if (request.ok) {
-          setAllSales(data);
-        }
+      let { data, request } = await getSales(
+        token,
+        null,
+        `date_start=2022-02-01&date_end=2022-03-1`
+      );
+      console.log(data);
+      if (request.ok) {
+        setFilteredDateSales(data);
+        setMonthSales(data.count);
       }
     }
-
     fetchData();
-  }, [salesCount, token]);
+  }, [token]);
 
   return (
     <>
@@ -68,22 +79,38 @@ const DashboardAdmin = () => {
           <Container maxWidth={false}>
             <Grid container spacing={3}>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <MonthSales />
+                <StatisticPanel value={monthSales} title="Cantidad de ventas en el mes" />
               </Grid>
               <Grid item xl={3} lg={3} sm={6} xs={12}>
                 <TotalCustomers biggestSale={"0001300"} />
               </Grid>
               <Grid item xl={3} lg={3} sm={6} xs={12}>
-                <TasksProgress />
+                <TasksProgress 
+                task="Porcentaje del objetivo de ventas en el mes"
+                goal={predictedMonth}
+                current={monthSales}
+                />
               </Grid>
               <Grid item xl={3} lg={3} sm={6} xs={12}>
-                <ComparativePercentagePanel />
+                <StatisticPanel value={predictedMonth} title="Cantidad esperada de ventas" />
               </Grid>
 
-              <MonthSalesChart />
-
-              <MonthCategoriesChart />
+              <Grid item lg={12} md={12} xl={9} xs={12}>
+                {filteredDateSales ? (
+                  <LatestOrders
+                    sales={filteredDateSales}
+                    handlePageChange={handlePageChange}
+                    page={page}
+                  />
+                ) : (
+                  <Skeleton variant="rectangular" width={210} height={118} />
+                )}
+              </Grid>
+              <Grid item lg={12} md={12} xl={9} xs={12}>
+              <LineChartComponent sales={filteredDateSales}></LineChartComponent>
+              </Grid>
             </Grid>
+
           </Container>
         </DashboardLayout>
       </Box>

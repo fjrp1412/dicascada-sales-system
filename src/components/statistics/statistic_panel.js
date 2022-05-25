@@ -25,7 +25,6 @@ return (
           <Typography
             color="textPrimary"
             variant="h4"
-            sx={{ fontSize: '1.5rem' }}
           >
            { value } 
           </Typography>

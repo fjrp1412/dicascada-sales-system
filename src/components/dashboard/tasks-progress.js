@@ -1,7 +1,9 @@
 import { Avatar, Box, Card, CardContent, Grid, LinearProgress, Typography } from '@mui/material';
 import InsertChartIcon from '@mui/icons-material/InsertChartOutlined';
 
-export const TasksProgress = (props) => (
+export const TasksProgress = (props) => {
+  const { task, goal, current } = props;
+  return (
   <Card
     sx={{ height: '100%' }}
     {...props}
@@ -18,13 +20,18 @@ export const TasksProgress = (props) => (
             gutterBottom
             variant="overline"
           >
-            PROGRESO DE OBJETIVO
+          { task }
           </Typography>
           <Typography
             color="textPrimary"
             variant="h4"
           >
-            75.5%
+            {Math.round((current * 100 / goal) * 100) / 100}%
+          </Typography>
+          <Typography
+            color="textPrimary"
+            variant="h6"
+          >
           </Typography>
         </Grid>
         <Grid item>
@@ -41,10 +48,10 @@ export const TasksProgress = (props) => (
       </Grid>
       <Box sx={{ pt: 3 }}>
         <LinearProgress
-          value={75.5}
+          value={Math.round((current * 100 / goal) * 100) / 100}
           variant="determinate"
         />
       </Box>
     </CardContent>
   </Card>
-);
+)};
