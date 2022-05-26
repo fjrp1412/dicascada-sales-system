@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { Box, Button, Divider, Drawer, Typography, useMediaQuery } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import LogoutIcon from '@mui/icons-material/Logout';
 import { ChartBar as ChartBarIcon } from "../icons/chart-bar";
 import { Menu as MenuIcon } from "../icons/menu";
 import { Cog as CogIcon } from "../icons/cog";
@@ -53,10 +54,17 @@ const items = [
     icon: <ShoppingBagIcon fontSize="small" />,
     title: "Lista De Ventas",
     admin: false,
-  },  {
+  },
+  {
     href: "/clients_list",
     icon: <UsersIcon fontSize="small" />,
     title: "Lista De Clientes",
+    admin: false,
+  },
+ {
+    href: "/logout",
+    icon: <LogoutIcon  fontSize="small" />,
+    title: "Cerrar sesion",
     admin: false,
   },
 ];

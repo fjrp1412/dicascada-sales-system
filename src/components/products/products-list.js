@@ -1,10 +1,6 @@
 import { useRef, useState, useEffect } from "react";
-import { format } from "date-fns";
-import { v4 as uuid } from "uuid";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import {
   Box,
-  Button,
   Card,
   CardHeader,
   Table,
@@ -12,22 +8,23 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TableSortLabel,
-  Tooltip,
   TableFooter,
   TablePagination,
   TableContainer,
 } from "@mui/material";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import { SeverityPill } from "../severity-pill";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { DeleteOutline } from "@mui/icons-material";
 
 export const ProductsList = (props) => {
-  const { products, handlePageChange, page, headLabels, pagination, productsFields } = props;
+  const { products, handlePageChange, page, headLabels, pagination, productsFields, editable, handleRemove } =
+    props;
 
+  console.log('products', products)
   return (
     <Card {...props}>
       <CardHeader title="Lista de Productos" />
-      <Box sx={{  width: "100%" }}>
+      <Box sx={{ width: "100%" }}>
         <TableContainer sx={{ maxHeight: 600, width: "100%" }}>
           <Table>
             <TableHead>
@@ -35,15 +32,32 @@ export const ProductsList = (props) => {
                 {headLabels.map((label) => (
                   <TableCell key={label}>{label}</TableCell>
                 ))}
+                {editable && (
+                  <>
+                  <TableCell>Editar</TableCell>
+                  <TableCell>Eliminar</TableCell>
+                  </>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
               {products.length > 0 &&
                 products.map((product) => (
-                  <TableRow hover key={product.id}>
+                  <TableRow hover key={product.name}>
                     {productsFields.map((field) => (
                       <TableCell key={field}>{product[field]}</TableCell>
                     ))}
+
+                    {editable && (
+                      <>
+                        <TableCell>
+                          <EditIcon />
+                        </TableCell>
+                        <TableCell onClick={() => handleRemove(product.name)}>
+                          <DeleteOutlineIcon />
+                        </TableCell>
+                      </>
+                    )}
                   </TableRow>
                 ))}
             </TableBody>

@@ -45,7 +45,7 @@ const getSalesIA = async (token, income, grouped_by, month) => {
   const url = `${BASE_URL}sale/ia`;
   const body = {
     'income': income,
-    'grouped_by': grouped_by,
+    'group_by': grouped_by,
     'month': month,
   }
     try {

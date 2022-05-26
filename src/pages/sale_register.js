@@ -21,13 +21,14 @@ import { DashboardLayout } from "../components/dashboard-layout";
 import { AppContext } from "src/context/AppContext";
 import { ProductsList } from "../components/products/products-list";
 import { getProducts } from "../utils/api/products";
+import { getClients } from "../utils/api/clients";
 import { FormSalesProductsModal } from "../components/sales/form-products-modal";
 
 const SaleRegister = () => {
   const router = useRouter();
   const [pageProducts, setPageProducts] = useState(0);
-  const [products, setProducts] = useState([]);
-  const { token, clients, loguedUser } = useContext(AppContext);
+  const [productsCart, setProductsCart] = useState([]);
+  const { token, clients, loguedUser, products, setClients, setProducts } = useContext(AppContext);
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
@@ -36,12 +37,41 @@ const SaleRegister = () => {
     }
   }, []);
 
+  useEffect(() => {
+    async function fetchData() {
+      const { data, request} = await getClients(token, null);
+      setClients(data);
+    }
+    if(!clients) {
+      fetchData();
+    }
+  }, [token])
+
+  useEffect(() => {
+    async function fetchData() {
+      const { data, request} = await getProducts(token, null);
+      setProducts(data);
+    }
+    if(!products) {
+      fetchData();
+    }
+  }, [token])
+
   const handlePageChangeProducts = async (event, newPage) => {
-    const newUrl = newPage > pageProducts ? products.next : products.previous;
+    const newUrl = newPage > pageProducts ? productsCart.next : productsCart.previous;
     setPageProducts(newPage);
     const { data, request } = await getProducts(token, newUrl);
-    setProducts(data);
+    setProductsCart(data);
   };
+
+  const handleRemoveProduct = async (name) =>{
+    console.log(name)
+    const newProducts = productsCart.filter(product => product.name !== name);
+    setProductsCart([
+      ...newProducts,
+    ]);
+  }
+
 
   const formik = useFormik({
     initialValues: {
@@ -171,11 +201,13 @@ const SaleRegister = () => {
                 ></TextField>
 
                 <ProductsList
-                  products={products}
-                  headLabels={["Producto", "Cantidad", "Precio", "Total", "Eliminar", "Editar"]}
+                  products={productsCart}
+                  editable={true}
+                  headLabels={["Producto", "Cantidad", "Precio", "Total"]}
                   productsFields={["name", "quantity", "typePrice", "total"]}
                   page={pageProducts}
                   handlePageChange={handlePageChangeProducts}
+                  handleRemove={handleRemoveProduct}
                 ></ProductsList>
                 <Box sx={{ py: 2, display: "flex", justifyContent: "flex-end", width: "100%" }}>
                   <IconButton
@@ -205,8 +237,8 @@ const SaleRegister = () => {
                       handleClose={() => {
                         setOpenModal(false);
                       }}
-                      cartProducts={products}
-                      setCartProducts={setProducts}
+                      cartProducts={productsCart}
+                      setCartProducts={setProductsCart}
                     ></FormSalesProductsModal>
                   )}
                 </Box>

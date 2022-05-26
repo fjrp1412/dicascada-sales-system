@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -13,19 +13,12 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 
 const LineChartComponent = ({ sales, predicted }) => {
-  useEffect(() => {
-    if (sales) {
-      sales.results.forEach((value) => {
-        value.income = parseFloat(value.income);
-      });
-    }
-  }, [sales]);
   return (
     <Grid component={Paper} sx={{ padding: 2 }}>
       {sales && (
         <ResponsiveContainer width="100%" height={500}>
-          <BarChart
-            data={sales.results}
+          <LineChart
+            data={sales}
             width={500}
             height={500}
             margin={{
@@ -36,12 +29,12 @@ const LineChartComponent = ({ sales, predicted }) => {
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" hide />
-            <YAxis type="number" domain={[0, (dataMax) => dataMax + 100]} />
+            <XAxis dataKey="month" />
+            <YAxis domain={['dataMin', 'auto']} />
             <Tooltip />
             <Legend />
-            <Bar type="monotone" dataKey="income" stroke="#82ca9d" />
-          </BarChart>
+            <Line type="monotone" dataKey="sales" stroke="#82ca9d" />
+          </LineChart>
         </ResponsiveContainer>
       )}
     </Grid>

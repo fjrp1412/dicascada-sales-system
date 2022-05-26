@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -29,7 +29,16 @@ const BarChartWithTable = ({
   variable,
   handleChangeVariable,
 }) => {
+  const [sortedData, setSortedData] = useState(null);
   console.log("values", values);
+
+  useEffect(() => {
+    const aux = values.statistic.sort((a, b) => parseFloat(b[variable]) - parseFloat(a[variable]));
+    console.log(aux)
+    console.log('sorted', aux.statistic)
+    setSortedData({'statistic': aux})
+  }, [variable, values]);
+
   return (
     <Grid
       container
@@ -44,11 +53,12 @@ const BarChartWithTable = ({
     >
       <Grid>
         <Select value={statistic} onChange={handleChange} sx={{ margin: 3 }}>
-          {options && Object.entries(options).map((option) => (
-            <MenuItem value={option[0]} key={option[0]}>
-              {option[1]}
-            </MenuItem>
-          ))}
+          {options &&
+            Object.entries(options).map((option) => (
+              <MenuItem value={option[0]} key={option[0]}>
+                {option[1]}
+              </MenuItem>
+            ))}
         </Select>
         <Select value={variable} onChange={handleChangeVariable} sx={{ margin: 3 }}>
           <MenuItem value="count">Volumen de ventas</MenuItem>
@@ -70,8 +80,8 @@ const BarChartWithTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {values &&
-              values.statistic.map((stat) => (
+            {sortedData &&
+              sortedData.statistic.map((stat) => (
                 <TableRow
                   key={stat.name}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -84,12 +94,12 @@ const BarChartWithTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      {values && (
+      {sortedData && (
         <ResponsiveContainer width="100%" height={500}>
           <BarChart
             width={500}
             height={300}
-            data={values.statistic}
+            data={sortedData.statistic}
             margin={{
               top: 5,
               right: 30,
@@ -102,7 +112,7 @@ const BarChartWithTable = ({
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey={variable} fill="#8884d8" maxBarSize={50} />
+            <Bar dataKey={variable} fill="#8884d8" maxBarSize={60} />
           </BarChart>
         </ResponsiveContainer>
       )}

@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Skeleton from "@mui/material/Skeleton";
 import { useState, useEffect, useContext } from "react";
-import { Box, Container, Grid } from "@mui/material";
+import { Box, Container, Grid, Typography } from "@mui/material";
 import { Budget } from "../dashboard/budget";
 import { MonthSales } from "./month-sales";
 import { LatestOrders } from "../dashboard/latest-orders";
@@ -19,7 +19,7 @@ import { getProducts } from "../../utils/api/products";
 import { ClientsList } from "../dashboard/clients-list";
 import { ComparativePercentagePanel } from "./comparative-percentage-panel";
 import { MonthSalesChart } from "./month-sales-chart";
-import { LineChartComponent } from "../charts/SalesBarChart";
+import { LineChartComponent } from "../charts/SalesLineChart";
 import { StatisticPanel } from "../statistics/statistic_panel";
 
 const DashboardAdmin = () => {
@@ -28,7 +28,7 @@ const DashboardAdmin = () => {
   const [page, setPage] = useState(0);
   const [monthSales, setMonthSales] = useState(null);
   const [predictedMonth, setPredictedMonth] = useState(null);
-
+  const [yearPredicted, setYearPredicted] = useState(null);
 
   const handlePageChange = async (event, newPage) => {
     setPage(newPage);
@@ -39,7 +39,7 @@ const DashboardAdmin = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const { data, request } = await getSalesIA(token, false, '', true)
+      const { data, request } = await getSalesIA(token, false, "", true);
       if (request.ok) {
         setPredictedMonth(data[0]);
       }
@@ -58,6 +58,21 @@ const DashboardAdmin = () => {
       if (request.ok) {
         setFilteredDateSales(data);
         setMonthSales(data.count);
+      }
+    }
+    fetchData();
+  }, [token]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const { data, request } = await getSalesIA(token, false, "month", true);
+      if (request.ok) {
+        console.log("EL MALDITO ARRAY QUE NECESITO", data);
+        let aux = [];
+        Object.entries(data).forEach((element) => {
+          aux.push({ month: element[0], sales: element[1] });
+        });
+        setYearPredicted(aux);
       }
     }
     fetchData();
@@ -85,10 +100,10 @@ const DashboardAdmin = () => {
                 <TotalCustomers biggestSale={"0001300"} />
               </Grid>
               <Grid item xl={3} lg={3} sm={6} xs={12}>
-                <TasksProgress 
-                task="Porcentaje del objetivo de ventas en el mes"
-                goal={predictedMonth}
-                current={monthSales}
+                <TasksProgress
+                  task="Porcentaje del objetivo de ventas en el mes"
+                  goal={predictedMonth}
+                  current={monthSales}
                 />
               </Grid>
               <Grid item xl={3} lg={3} sm={6} xs={12}>
@@ -107,10 +122,17 @@ const DashboardAdmin = () => {
                 )}
               </Grid>
               <Grid item lg={12} md={12} xl={9} xs={12}>
-              <LineChartComponent sales={filteredDateSales}></LineChartComponent>
+                <Typography
+                  color="textSecondary"
+                  gutterBottom
+                  variant="overline"
+                  sx={{ fontSize: "1rem" }}
+                >
+                  Proyeccion de ventas de este año
+                </Typography>
+                <LineChartComponent sales={yearPredicted}></LineChartComponent>
               </Grid>
             </Grid>
-
           </Container>
         </DashboardLayout>
       </Box>

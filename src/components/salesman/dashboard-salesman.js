@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useState, useEffect, useContext } from "react";
-import { Box, Container, Grid } from "@mui/material";
+import { Box, Container, Grid, Select, MenuItem, Paper } from "@mui/material";
 import { Budget } from "../dashboard/budget";
 import { LatestOrders } from "../dashboard/latest-orders";
 import { LatestProducts } from "../dashboard/latest-products";
@@ -26,7 +26,6 @@ const DashboardSalesman = ({
   handlePageChangeClients,
   user,
 }) => {
-
   const {
     token,
     isAdmin,
@@ -41,6 +40,8 @@ const DashboardSalesman = ({
     salesCount,
     setSalesCount,
   } = useContext(AppContext);
+
+  const [tableSelected, setTableSelected] = useState("sales");
 
   useEffect(() => {
     async function fetchData() {
@@ -63,11 +64,13 @@ const DashboardSalesman = ({
           setClients(data);
         }
       }
-
     }
     fetchData();
   }, [token]);
 
+  const handleChangeTable = (event) => {
+    setTableSelected(event.target.value);
+  };
 
   return (
     <>
@@ -93,28 +96,35 @@ const DashboardSalesman = ({
               <Grid item xl={3} lg={3} sm={6} xs={12}>
                 <TasksProgress />
               </Grid>
-              <Grid item lg={12} md={12} xl={9} xs={12}>
-                {sales && (
+              <Grid  item lg={12} md={12} xl={9} xs={12}>
+                <Grid 
+                item xl={3} lg={3} sm={6} xs={12}>
+                  <Select 
+                  sx={{border: '1px solid #ced4da', marginBottom: 1}}
+                  value={tableSelected} onChange={handleChangeTable}>
+                    <MenuItem value={"sales"}>Ventas</MenuItem>
+                    <MenuItem value={"products"}>Productos</MenuItem>
+                    <MenuItem value={"clients"}>Clientes</MenuItem>
+                  </Select>
+                </Grid>
+
+                {sales && tableSelected === "sales" && (
                   <LatestOrders
                     sales={sales}
                     handlePageChange={handlePageChangeSales}
                     page={pageSales}
                   />
                 )}
-              </Grid>
 
-              <Grid item lg={12} md={12} xl={9} xs={12}>
-                {products && (
+                {products && tableSelected === "products" && (
                   <ProductsList
                     products={products}
                     handlePageChange={handlePageChangeProducts}
                     page={pageProducts}
                   />
                 )}
-              </Grid>
 
-              <Grid item lg={12} md={12} xl={9} xs={12}>
-                {clients && (
+                {clients && tableSelected === "clients" && (
                   <ClientsList
                     clients={clients}
                     handlePageChange={handlePageChangeClients}

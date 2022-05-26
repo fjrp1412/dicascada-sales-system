@@ -45,6 +45,7 @@ export const FormSalesProductsModal = ({ open, handleClose, setCartProducts, car
         typePrice = "Precio convenio"
     }
 
+    console.log(cartProducts);
     setCartProducts([...cartProducts, 
         {
         name: product.name,

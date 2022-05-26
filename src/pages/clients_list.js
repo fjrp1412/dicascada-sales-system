@@ -17,11 +17,9 @@ import {
   TablePagination,
   TableContainer,
 } from "@mui/material";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { AppContext } from "../context/AppContext";
 import { DashboardLayout } from "../components/dashboard-layout";
-import { getClients } from "../utils/api/clients";
-import { SeverityPill } from "../components/severity-pill";
+import { getClients, getClientIndicator } from "../utils/api/clients";
 
 const ClientsList = (props) => {
   const { token, clients, setClients } = useContext(AppContext);
@@ -36,14 +34,14 @@ const ClientsList = (props) => {
 
   useEffect(() => {
     async function fetchData() {
-      const { data, request } = await getClients(token, null);
-      if (request.ok) {
+      const { data, request } = await getClientIndicator(token, null);
+      if(request.ok) {
+        data.results = data.results.filter((element) => element.purchases > 8)
         setClients(data);
       }
+      console.log('indicators', data)
     }
-    if (!clients) {
       fetchData();
-    }
   }, [token]);
 
   const handlePageChange = async (event, newPage) => {
@@ -72,14 +70,14 @@ const ClientsList = (props) => {
                 {clients &&
                   clients.results.map((client) => (
                     <TableRow hover 
-                    key={client.id}
-                    onClick={() => router.push(`/client_detail/${client.id}`)}
+                    key={client.client.id}
+                    onClick={() => router.push(`/client_detail/${client.client.id}`)}
                     sx={{ cursor: "pointer" }}
                     >
-                      <TableCell>{client.name}</TableCell>
-                      <TableCell>{client.identity_card}</TableCell>
-                      <TableCell>{client.phone}</TableCell>
-                      <TableCell>{client.address}</TableCell>
+                      <TableCell>{client.client.name}</TableCell>
+                      <TableCell>{client.client.identity_card}</TableCell>
+                      <TableCell>{client.client.phone}</TableCell>
+                      <TableCell>{client.client.address}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>

@@ -27,6 +27,8 @@ const getSalesman = async (token, id) => {
       },
     });
     const data = await request.json();
+
+    console.log("salesman", data);
     return { request, data };
   } catch (e) {
     return { request: { ok: false, message: e.message } };

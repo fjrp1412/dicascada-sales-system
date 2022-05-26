@@ -34,7 +34,7 @@ const getClient = async (token, id) => {
 } 
 
 const getClientIndicator = async (token, id) => {
-  const url = `${BASE_URL + `client/indicator/${id}`}`;
+  const url = `${BASE_URL + `client/indicator/${id ? id : ''}`}`;
   try {
     const request = await fetch(url, {
       headers: {
