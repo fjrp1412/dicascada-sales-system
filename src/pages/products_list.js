@@ -1,9 +1,7 @@
 import { useContext, useState, useEffect } from "react";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import { useRouter } from "next/router";
 import {
   Box,
-  Button,
   Card,
   CardHeader,
   Table,
@@ -11,13 +9,10 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TableSortLabel,
-  Tooltip,
   TableFooter,
   TablePagination,
   TableContainer,
 } from "@mui/material";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { AppContext } from "../context/AppContext";
 import { DashboardLayout } from "../components/dashboard-layout";
 import { getProducts } from "../utils/api/products";

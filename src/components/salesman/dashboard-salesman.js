@@ -1,15 +1,11 @@
 import Head from "next/head";
 import { useState, useEffect, useContext } from "react";
-import { Box, Container, Grid, Select, MenuItem, Paper } from "@mui/material";
+import { Box, Container, Grid, Select, MenuItem } from "@mui/material";
 import { Budget } from "../dashboard/budget";
 import { LatestOrders } from "../dashboard/latest-orders";
-import { LatestProducts } from "../dashboard/latest-products";
-import { Sales } from "../dashboard/sales";
 import { TasksProgress } from "../dashboard/tasks-progress";
 import { TotalCustomers } from "../dashboard/total-customers";
 import { ProductsList } from "../dashboard/products-list";
-import { TotalProfit } from "../dashboard/total-profit";
-import { TrafficByDevice } from "../dashboard/traffic-by-device";
 import { DashboardLayout } from "../dashboard-layout";
 import { AppContext } from "../../context/AppContext";
 import { getSales } from "../../utils/api/sales";
