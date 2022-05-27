@@ -1,4 +1,3 @@
-import { useRef, useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -14,7 +13,6 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { DeleteOutline } from "@mui/icons-material";
 
 export const ProductsList = (props) => {
   const { products, handlePageChange, page, headLabels, pagination, productsFields, editable, handleRemove } =

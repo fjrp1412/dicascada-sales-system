@@ -182,8 +182,8 @@ const SaleRegister = () => {
                 >
                   {clients &&
                     clients.results.map((client) => (
-                      <MenuItem value={client.id} key={client.id}>
-                        {client.name}
+                      <MenuItem value={client.client.id} key={client.client.id}>
+                        {client.client.name}
                       </MenuItem>
                     ))}
                 </Select>
