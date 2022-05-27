@@ -58,59 +58,56 @@ const SalesmanDetail = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const { data, request } = await getSalesman(token, router.query.salesman);
-      if (request.ok) {
-        setSalesman(data);
+      if (!salesman) {
+        const { data, request } = await getSalesman(token, router.query.salesman);
+        if (request.ok) {
+          setSalesman(data);
+        }
+      }
+
+      if (!indicator) {
+        const { data, request } = await getSalesmanIndicator(token, router.query.salesman);
+        if (request.ok) {
+          setIndicator(data);
+        }
+      }
+
+      if (!salesmanSales) {
+        const { data, request } = await getSales(token, null, `salesman=${router.query.salesman}`);
+        if (request.ok) {
+          setSalesmanSales(data);
+        }
+      }
+
+      if (!income) {
+        const { data, request } = await getSalesmanIA(token, router.query.salesman, true);
+        if (request.ok) {
+          setIncome(data[0]);
+        }
       }
     }
-    if (!salesman) {
+    if (!salesman || !indicator || !salesmanSales || !income) {
       fetchData();
     }
   }, [token]);
 
   useEffect(() => {
     async function fetchData() {
-      const { data, request } = await getSalesmanIndicator(token, router.query.salesman);
+      const { data, request } = await getSalesmanStatistic(
+        token,
+        router.query.salesman,
+        statisticType
+      );
       if (request.ok) {
-        setIndicator({ ...data });
-      }
-    }
-    fetchData();
-  }, [salesman]);
-
-  useEffect(() => {
-    async function fetchData() {
-      const { data, request } = await getSalesmanStatistic(token, router.query.salesman, statisticType);
-      if (request.ok) {
-          console.log('query param', router.query.salesman)
+        console.log("query param", router.query.salesman);
         const aux = data[router.query.salesman];
         const option = options[statisticType];
-        console.log(aux)
+        console.log(aux);
         setStatistic({ statistic: Object.values(aux[option]) });
       }
     }
     fetchData();
   }, [token, statisticType]);
-
-  useEffect(() => {
-    async function fetchData() {
-      const { data, request } = await getSales(token, null, `salesman=${router.query.salesman}`);
-      if (request.ok) {
-        setSalesmanSales(data);
-      }
-    }
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    async function fetchData() {
-      const { data, request } = await getSalesmanIA(token, router.query.client, true);
-      if (request.ok) {
-        setIncome(data[0]);
-      }
-    }
-    fetchData();
-  }, []);
 
   return (
     <DashboardLayout>
@@ -190,4 +187,3 @@ const SalesmanDetail = () => {
 };
 
 export default SalesmanDetail;
-
