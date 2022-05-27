@@ -3,8 +3,10 @@ import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { Box, Divider, Drawer, useMediaQuery } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import { ChartBar as ChartBarIcon } from "../icons/chart-bar";
-import { ShoppingBag as ShoppingBagIcon } from "../icons/shopping-bag";
 import { Users as UsersIcon } from "../icons/users";
 import { NavItem } from "./nav-item";
 import { AppContext } from "../context/AppContext";
@@ -18,16 +20,11 @@ const items = [
   },
   {
     href: "/client_register",
-    icon: <UsersIcon fontSize="small" />,
+    icon: <PersonAddAltIcon fontSize="small" />,
     title: "Registrar Cliente",
     admin: false,
   },
-  {
-    href: "/sale_register",
-    icon: <ShoppingBagIcon fontSize="small" />,
-    title: "Registrar Ventas",
-    admin: false,
-  },
+
   {
     href: "/salesman_list",
     icon: <UsersIcon fontSize="small" />,
@@ -36,13 +33,19 @@ const items = [
   },
   {
     href: "/products_list",
-    icon: <UsersIcon fontSize="small" />,
+    icon: <FormatListNumberedIcon fontSize="small" />,
     title: "Lista Productos",
     admin: false,
   },
   {
+    href: "/sale_register",
+    icon: <ReceiptIcon  fontSize="small" />,
+    title: "Registrar Ventas",
+    admin: false,
+  },
+  {
     href: "/sales_list",
-    icon: <ShoppingBagIcon fontSize="small" />,
+    icon: <FormatListNumberedIcon fontSize="small" />,
     title: "Lista De Ventas",
     admin: false,
   },
