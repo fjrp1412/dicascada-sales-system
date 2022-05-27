@@ -38,15 +38,15 @@ const getAllSales = async (token, limit) => {
     return { request: { ok: false, message: e.message } };
   }
 
-
 }
 
-const getSalesIA = async (token, income, grouped_by, month) => {
+const getSalesIA = async (token, income, grouped_by, month, by_month) => {
   const url = `${BASE_URL}sale/ia`;
   const body = {
     'income': income,
     'group_by': grouped_by,
     'month': month,
+    'by_month': by_month
   }
     try {
     const request = await fetch(url, {
@@ -58,13 +58,35 @@ const getSalesIA = async (token, income, grouped_by, month) => {
       body: JSON.stringify(body),
     });
     const data = await request.json();
-    console.log(data);
+    // console.log(data);
 
     return { request, data };
   } catch (e) {
     return { request: { ok: false, message: e.message } };
   }
-
 }
 
-export { getSales, getAllSales, getSalesIA };
+const getSalesStatistic = async (token,  year) => {
+  const url = `${BASE_URL}sale/statistic`;
+  const body = {
+    'year': year
+  }
+    try {
+    const request = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await request.json();
+    console.log(`data del year ${year}`, data);
+
+    return { request, data };
+  } catch (e) {
+    return { request: { ok: false, message: e.message } };
+  }
+}
+
+export { getSales, getAllSales, getSalesIA, getSalesStatistic };

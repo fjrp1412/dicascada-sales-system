@@ -1,27 +1,11 @@
-import { useState, useEffect, useContext } from "react";
+import { useEffect, useContext } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Link,
-  TextField,
-  Typography,
-  Select,
-  MenuItem,
-  InputLabel,
-  IconButton,
-} from "@mui/material";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { Box, Button, Container, Grid, TextField, Typography } from "@mui/material";
 import { DashboardLayout } from "../components/dashboard-layout";
 import { AppContext } from "src/context/AppContext";
-import { ProductsList } from "../components/products/products-list";
-import { getProducts } from "../utils/api/products";
-import { FormSalesProductsModal } from "../components/sales/form-products-modal";
 
 const ClientRegister = () => {
   const { token } = useContext(AppContext);

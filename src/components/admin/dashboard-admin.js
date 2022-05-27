@@ -1,24 +1,23 @@
 import Head from "next/head";
 import Skeleton from "@mui/material/Skeleton";
 import { useState, useEffect, useContext } from "react";
-import { Box, Container, Grid, Typography } from "@mui/material";
-import { Budget } from "../dashboard/budget";
-import { MonthSales } from "./month-sales";
+import {
+  Box,
+  Container,
+  Grid,
+  Typography,
+  Select,
+  MenuItem,
+  Checkbox,
+  FormGroup,
+  FormControlLabel,
+} from "@mui/material";
 import { LatestOrders } from "../dashboard/latest-orders";
-import { LatestProducts } from "../dashboard/latest-products";
-import { Sales } from "../dashboard/sales";
 import { TasksProgress } from "../dashboard/tasks-progress";
 import { TotalCustomers } from "../dashboard/total-customers";
-import { ProductsList } from "../dashboard/products-list";
-import { TrafficByDevice } from "../dashboard/traffic-by-device";
 import { DashboardLayout } from "../dashboard-layout";
 import { AppContext } from "../../context/AppContext";
-import { getSales, getSalesIA } from "../../utils/api/sales";
-import { getClients } from "../../utils/api/clients";
-import { getProducts } from "../../utils/api/products";
-import { ClientsList } from "../dashboard/clients-list";
-import { ComparativePercentagePanel } from "./comparative-percentage-panel";
-import { MonthSalesChart } from "./month-sales-chart";
+import { getSales, getSalesIA, getSalesStatistic } from "../../utils/api/sales";
 import { LineChartComponent } from "../charts/SalesLineChart";
 import { StatisticPanel } from "../statistics/statistic_panel";
 
@@ -29,6 +28,10 @@ const DashboardAdmin = () => {
   const [monthSales, setMonthSales] = useState(null);
   const [predictedMonth, setPredictedMonth] = useState(null);
   const [yearPredicted, setYearPredicted] = useState(null);
+  const [yearSales, setYearSales] = useState(null);
+  const [previousYearSales, setPreviousYearSales] = useState(null);
+  const [actualYearSales, setActualYearSales] = useState(null);
+  const [radioOptionsSalesChart, setRadioOptionsSalesChart] = useState({ predicted: true });
 
   const handlePageChange = async (event, newPage) => {
     setPage(newPage);
@@ -39,8 +42,9 @@ const DashboardAdmin = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const { data, request } = await getSalesIA(token, false, "", true);
+      const { data, request } = await getSalesIA(token, false, "", 2, true);
       if (request.ok) {
+        console.log("next month preditcion", data);
         setPredictedMonth(data[0]);
       }
     }
@@ -65,18 +69,42 @@ const DashboardAdmin = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const { data, request } = await getSalesIA(token, false, "month", true);
+      const { data, request } = await getSalesIA(token, false, "month", null, true);
       if (request.ok) {
         console.log("EL MALDITO ARRAY QUE NECESITO", data);
         let aux = [];
         Object.entries(data).forEach((element) => {
-          aux.push({ month: element[0], sales: element[1] });
+          aux.push({ name: element[0], count: element[1] });
         });
         setYearPredicted(aux);
       }
     }
     fetchData();
   }, [token]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const { data, request } = await getSalesStatistic(token, yearSales);
+      if (request.ok) {
+        setPreviousYearSales(data);
+      }
+    }
+    fetchData();
+  }, [token, yearSales]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const { data, request } = await getSalesStatistic(token, 2022);
+      if (request.ok) {
+        setActualYearSales(data);
+      }
+    }
+    fetchData();
+  }, [token]);
+
+  useEffect(() => {
+    console.log(radioOptionsSalesChart);
+  }, [radioOptionsSalesChart]);
 
   return (
     <>
@@ -128,9 +156,90 @@ const DashboardAdmin = () => {
                   variant="overline"
                   sx={{ fontSize: "1rem" }}
                 >
-                  Proyeccion de ventas de este año
+                  Grafica de ventas
                 </Typography>
-                <LineChartComponent sales={yearPredicted}></LineChartComponent>
+
+                <Grid item lg={12} md={12} xl={9} xs={12}>
+                  {radioOptionsSalesChart.previous && (
+                    <>
+                      <Typography
+                        color="textSecondary"
+                        gutterBottom
+                        variant="overline"
+                        sx={{ fontSize: "0.8rem", margin: 2 }}
+                      >
+                        Seleccionar previo año a visualizar
+                      </Typography>
+                      <Select
+                        value={yearSales}
+                        onChange={(event) => {
+                          setYearSales(event.target.value);
+                        }}
+                      >
+                        <MenuItem value=""></MenuItem>
+                        <MenuItem value={2021}>2021</MenuItem>
+                        <MenuItem value={2020}>2020</MenuItem>
+                        <MenuItem value={2019}>2019</MenuItem>
+                        <MenuItem value={2018}>2018</MenuItem>
+                      </Select>
+                    </>
+                  )}
+                </Grid>
+                <Grid item xl={3} lg={3} sm={6} xs={12}>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={radioOptionsSalesChart.predicted}
+                          onClick={(e) => {
+                            setRadioOptionsSalesChart({
+                              ...radioOptionsSalesChart,
+                              predicted: !radioOptionsSalesChart.predicted,
+                            });
+                          }}
+                        />
+                      }
+                      label="Predicciones del año"
+                    />
+
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={radioOptionsSalesChart.actual}
+                          onClick={(e) => {
+                            setRadioOptionsSalesChart({
+                              ...radioOptionsSalesChart,
+                              actual: !radioOptionsSalesChart.actual,
+                            });
+                          }}
+                        />
+                      }
+                      label="Año actual"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={radioOptionsSalesChart.previous}
+                          onClick={(e) => {
+                            setRadioOptionsSalesChart({
+                              ...radioOptionsSalesChart,
+                              previous: !radioOptionsSalesChart.previous,
+                            });
+                          }}
+                        />
+                      }
+                      label="Año previo"
+                    />
+                  </FormGroup>
+                </Grid>
+
+                <LineChartComponent
+                  arrays={{
+                    predicted: radioOptionsSalesChart.predicted ? yearPredicted : null,
+                    previous: radioOptionsSalesChart.previous ? previousYearSales : null,
+                    actual: radioOptionsSalesChart.actual ? actualYearSales : null,
+                  }}
+                ></LineChartComponent>
               </Grid>
             </Grid>
           </Container>
