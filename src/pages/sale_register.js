@@ -38,23 +38,29 @@ const SaleRegister = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const { data, request} = await getClients(token, null);
-      setClients(data);
-    }
-    if(!clients) {
-      fetchData();
-    }
-  }, [token])
+      if (!clients) {
+        const { data, request } = await getClients(token, null);
+        if (request.ok) {
+          setClients(data);
+        }
+      }
 
-  useEffect(() => {
-    async function fetchData() {
-      const { data, request} = await getProducts(token, null);
-      setProducts(data);
+      if (!products) {
+        const { data, request } = await getProducts(token, null);
+
+        if (request.ok) {
+          setProducts(data);
+        }
+      }
     }
-    if(!products) {
+
+    if (!clients || !products) {
       fetchData();
     }
-  }, [token])
+  }, [token]);
+
+  console.log('clients', clients)
+  console.log('products', products)
 
   const handlePageChangeProducts = async (event, newPage) => {
     const newUrl = newPage > pageProducts ? productsCart.next : productsCart.previous;
@@ -63,14 +69,11 @@ const SaleRegister = () => {
     setProductsCart(data);
   };
 
-  const handleRemoveProduct = async (name) =>{
-    console.log(name)
-    const newProducts = productsCart.filter(product => product.name !== name);
-    setProductsCart([
-      ...newProducts,
-    ]);
-  }
-
+  const handleRemoveProduct = async (name) => {
+    console.log(name);
+    const newProducts = productsCart.filter((product) => product.name !== name);
+    setProductsCart([...newProducts]);
+  };
 
   const formik = useFormik({
     initialValues: {
