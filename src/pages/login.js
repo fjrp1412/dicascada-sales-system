@@ -20,7 +20,6 @@ const Login = () => {
       password: Yup.string().max(255).required("Password is required"),
     }),
     onSubmit: async (form) => {
-      console.log(form);
       const { data, request } = await login({ form });
       const token = data.token;
       window.localStorage.setItem("token", token);
@@ -29,8 +28,6 @@ const Login = () => {
         const { request, data } = await getMe({ token });
         if (data.type.toLowerCase() !== "salesman") {
           setIsAdmin(true);
-          console.log("is admin", data.type.toLowerCase() !== "salesman");
-          console.log("type", data.type);
         }
         setLoguedUser(data);
 
