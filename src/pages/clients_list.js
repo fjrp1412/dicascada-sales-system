@@ -38,7 +38,7 @@ const ClientsList = (props) => {
       console.log('indicators', data)
     }
       fetchData();
-  }, [token]);
+  }, [token, clients]);
 
   const handlePageChange = async (event, newPage) => {
     const newUrl = newPage > page ? clients.next : clients.previous;

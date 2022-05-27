@@ -41,10 +41,10 @@ export const ClientsList = (props) => {
             <TableBody>
               {clients.results.map((client) => (
                 <TableRow hover key={client.id}>
-                  <TableCell>{client.name}</TableCell>
-                  <TableCell>{client.identity_card}</TableCell>
-                  <TableCell>{client.phone === "nan" ? "" : client.phone}</TableCell>
-                  <TableCell>{client.address === "nan" ? "" : client.address}</TableCell>
+                    <TableCell>{client.client.name}</TableCell>
+                  <TableCell>{client.client.identity_card}</TableCell>
+                  <TableCell>{client.client.phone === "nan" ? "" : client.client.phone}</TableCell>
+                  <TableCell>{client.client.address === "nan" ? "" : client.client.address}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -9,7 +9,7 @@ import { ProductsList } from "../dashboard/products-list";
 import { DashboardLayout } from "../dashboard-layout";
 import { AppContext } from "../../context/AppContext";
 import { getSales } from "../../utils/api/sales";
-import { getClients } from "../../utils/api/clients";
+import { getClientIndicator } from "../../utils/api/clients";
 import { getProducts } from "../../utils/api/products";
 import { ClientsList } from "../dashboard/clients-list";
 
@@ -55,9 +55,10 @@ const DashboardSalesman = ({
         }
       }
       if (!clients) {
-        const { data, request } = await getClients(token, null);
+        const { data, request } = await getClientIndicator(token, null);
         if (request.ok) {
           setClients(data);
+          console.log('clients', data)
         }
       }
     }
