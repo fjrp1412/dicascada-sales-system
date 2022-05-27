@@ -99,7 +99,7 @@ const SaleRegister = () => {
         <title>Login | Material Kit</title>
       </Head>
       <DashboardLayout>
-        {token && (
+        {token && clients && products && (
           <Box
             component="main"
             sx={{

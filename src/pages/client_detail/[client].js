@@ -27,7 +27,7 @@ const ClientDetail = () => {
   const [statistic, setStatistic] = useState(null);
   const [clientSales, setClientSales] = useState(null);
   const [page, setPage] = useState(0);
-  const [income, setIncome] = useState(null);
+  const [incomePredicted, setIncomePredicted] = useState(null);
   const [statisticType, setStatisticType] = useState("salesman");
   const [variable, setVariable] = useState("count");
   const options = {
@@ -35,8 +35,6 @@ const ClientDetail = () => {
     category: "categories",
     product: "products",
   };
-
-
 
   const handleChangeStatistic = (event) => {
     setStatisticType(event.target.value);
@@ -60,25 +58,38 @@ const ClientDetail = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const { data, request } = await getClient(token, router.query.client);
-      if (request.ok) {
-        setClient(data);
+      if (!client) {
+        const { data, request } = await getClient(token, router.query.client);
+        if (request.ok) {
+          setClient(data);
+        }
+      }
+
+      if(!indicator) {
+        const { data, request } = await getClientIndicator(token, router.query.client);
+        if (request.ok) {
+          setIndicator(data);
+        }
+      }
+
+      if(!clientSales) {
+        const { data, request } = await getSales(token, null, `client=${router.query.client}`);
+        if (request.ok) {
+          setClientSales(data);
+        }
+      }
+
+      if(!incomePredicted) {
+        const { data, request } = await getClientIA(token, router.query.client, true);
+        if (request.ok) {
+          setIncomePredicted(data);
+        }
       }
     }
-    if (!client) {
+    if (!client || !indicator || !clientSales || !incomePredicted) {
       fetchData();
     }
   }, [token]);
-
-  useEffect(() => {
-    async function fetchData() {
-      const { data, request } = await getClientIndicator(token, router.query.client);
-      if (request.ok) {
-        setIndicator({ ...data });
-      }
-    }
-    fetchData();
-  }, [client]);
 
   useEffect(() => {
     async function fetchData() {
@@ -92,25 +103,6 @@ const ClientDetail = () => {
     fetchData();
   }, [token, statisticType]);
 
-  useEffect(() => {
-    async function fetchData() {
-      const { data, request } = await getSales(token, null, `client=${router.query.client}`);
-      if (request.ok) {
-        setClientSales(data);
-      }
-    }
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    async function fetchData() {
-      const { data, request } = await getClientIA(token, router.query.client, true);
-      if (request.ok) {
-        setIncome(data[0]);
-      }
-    }
-    fetchData();
-  }, []);
 
   return (
     <DashboardLayout>
@@ -144,7 +136,7 @@ const ClientDetail = () => {
               </Grid>{" "}
               <Grid item lg={3} sm={6} xl={3} xs={12}>
                 <StatisticPanel
-                  value={`${Math.round(income * 100) / 100}$`}
+                  value={`${Math.round(incomePredicted * 100) / 100}$`}
                   title="Proyeccion monto siguiente compra"
                 />
               </Grid>
