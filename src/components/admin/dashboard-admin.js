@@ -19,9 +19,10 @@ import { AppContext } from "../../context/AppContext";
 import { getSales, getSalesIA, getSalesStatistic, getBiggestSale } from "../../utils/api/sales";
 import { LineChartComponent } from "../charts/SalesLineChart";
 import { StatisticPanel } from "../statistics/statistic_panel";
+import { getLocalStorage } from "../../utils/helpers/localStorage";
 
 const DashboardAdmin = () => {
-  const { token } = useContext(AppContext);
+  const token =  getLocalStorage('token');
   const [filteredDateSales, setFilteredDateSales] = useState(null);
   const [page, setPage] = useState(0);
   const [monthSales, setMonthSales] = useState(null);
