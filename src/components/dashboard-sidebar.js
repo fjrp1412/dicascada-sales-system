@@ -1,22 +1,13 @@
-import { useEffect } from "react";
-import NextLink from "next/link";
+import { useEffect, useContext } from "react";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { Box, Button, Divider, Drawer, Typography, useMediaQuery } from "@mui/material";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import LogoutIcon from '@mui/icons-material/Logout';
+import { Box, Divider, Drawer, useMediaQuery } from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { ChartBar as ChartBarIcon } from "../icons/chart-bar";
-import { Menu as MenuIcon } from "../icons/menu";
-import { Cog as CogIcon } from "../icons/cog";
-import { Lock as LockIcon } from "../icons/lock";
-import { Selector as SelectorIcon } from "../icons/selector";
 import { ShoppingBag as ShoppingBagIcon } from "../icons/shopping-bag";
-import { User as UserIcon } from "../icons/user";
-import { UserAdd as UserAddIcon } from "../icons/user-add";
 import { Users as UsersIcon } from "../icons/users";
-import { XCircle as XCircleIcon } from "../icons/x-circle";
-import { Logo } from "./logo";
 import { NavItem } from "./nav-item";
+import { AppContext } from "../context/AppContext";
 
 const items = [
   {
@@ -41,7 +32,7 @@ const items = [
     href: "/salesman_list",
     icon: <UsersIcon fontSize="small" />,
     title: "Lista Vendedores",
-    admin: false,
+    admin: true,
   },
   {
     href: "/products_list",
@@ -61,9 +52,9 @@ const items = [
     title: "Lista De Clientes",
     admin: false,
   },
- {
+  {
     href: "/logout",
-    icon: <LogoutIcon  fontSize="small" />,
+    icon: <LogoutIcon fontSize="small" />,
     title: "Cerrar sesion",
     admin: false,
   },
@@ -71,6 +62,7 @@ const items = [
 
 export const DashboardSidebar = (props) => {
   const { open, onClose } = props;
+  const { isAdmin } = useContext(AppContext);
   const router = useRouter();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up("lg"), {
     defaultMatches: true,
@@ -107,9 +99,24 @@ export const DashboardSidebar = (props) => {
           }}
         />
         <Box sx={{ flexGrow: 1 }}>
-          {items.map((item) => (
-            <NavItem key={item.title} icon={item.icon} href={item.href} title={item.title} />
-          ))}
+          {items.map((item) => {
+            return (
+              <>
+                {item.admin ? (
+                  isAdmin && (
+                    <NavItem
+                      key={item.title}
+                      icon={item.icon}
+                      href={item.href}
+                      title={item.title}
+                    />
+                  )
+                ) : (
+                  <NavItem key={item.title} icon={item.icon} href={item.href} title={item.title} />
+                )}
+              </>
+            );
+          })}
         </Box>
         <Divider sx={{ borderColor: "#2D3748" }} />
       </Box>

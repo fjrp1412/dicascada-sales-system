@@ -29,7 +29,7 @@ const Login = () => {
         const { request, data } = await getMe({ token });
         if (data.type.toLowerCase() !== "salesman") {
           setIsAdmin(true);
-          console.log("is admin", isAdmin);
+          console.log("is admin", data.type.toLowerCase() !== "salesman");
           console.log("type", data.type);
         }
         setLoguedUser(data);
