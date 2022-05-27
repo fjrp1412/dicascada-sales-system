@@ -1,10 +1,5 @@
-import { useRef, useState, useEffect } from "react";
-import { format } from "date-fns";
-import { v4 as uuid } from "uuid";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import {
   Box,
-  Button,
   Card,
   CardHeader,
   Table,
@@ -18,7 +13,6 @@ import {
   TablePagination,
   TableContainer,
 } from "@mui/material";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { SeverityPill } from "../severity-pill";
 
 export const LatestOrders = (props) => {
@@ -54,8 +48,7 @@ export const LatestOrders = (props) => {
                     <TableCell>
                       <SeverityPill
                         color={
-                          (order.status === "delivered" && "success") ||
-                          (order.status === "refunded" && "error") ||
+                          (order.status.toLowerCase() === "completed" && "success") ||
                           "warning"
                         }
                       >

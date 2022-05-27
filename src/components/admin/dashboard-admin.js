@@ -14,10 +14,9 @@ import {
 } from "@mui/material";
 import { LatestOrders } from "../dashboard/latest-orders";
 import { TasksProgress } from "../dashboard/tasks-progress";
-import { TotalCustomers } from "../dashboard/total-customers";
 import { DashboardLayout } from "../dashboard-layout";
 import { AppContext } from "../../context/AppContext";
-import { getSales, getSalesIA, getSalesStatistic } from "../../utils/api/sales";
+import { getSales, getSalesIA, getSalesStatistic, getBiggestSale } from "../../utils/api/sales";
 import { LineChartComponent } from "../charts/SalesLineChart";
 import { StatisticPanel } from "../statistics/statistic_panel";
 
@@ -32,6 +31,7 @@ const DashboardAdmin = () => {
   const [previousYearSales, setPreviousYearSales] = useState(null);
   const [actualYearSales, setActualYearSales] = useState(null);
   const [radioOptionsSalesChart, setRadioOptionsSalesChart] = useState({ predicted: true });
+  const [biggestSale, setBiggestSale] = useState(null);
 
   const handlePageChange = async (event, newPage) => {
     setPage(newPage);
@@ -42,41 +42,49 @@ const DashboardAdmin = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const { data, request } = await getSalesIA(token, false, "", 2, true);
-      if (request.ok) {
-        console.log("next month preditcion", data);
-        setPredictedMonth(data[0]);
+      if (!predictedMonth) {
+        const { data, request } = await getSalesIA(token, false, "", 2, true);
+        if (request.ok) {
+          console.log("next month preditcion", data);
+          setPredictedMonth(data[0]);
+        }
       }
-    }
-    fetchData();
-  }, [token]);
 
-  useEffect(() => {
-    async function fetchData() {
-      let { data, request } = await getSales(
-        token,
-        null,
-        `date_start=2022-02-01&date_end=2022-03-1`
-      );
-      console.log(data);
-      if (request.ok) {
-        setFilteredDateSales(data);
-        setMonthSales(data.count);
+      if (!filteredDateSales && !monthSales) {
+        let { data, request } = await getSales(
+          token,
+          null,
+          `date_start=2022-02-01&date_end=2022-03-1`
+        );
+        if (request.ok) {
+          setFilteredDateSales(data);
+          setMonthSales(data.count);
+        }
       }
-    }
-    fetchData();
-  }, [token]);
 
-  useEffect(() => {
-    async function fetchData() {
-      const { data, request } = await getSalesIA(token, false, "month", null, true);
-      if (request.ok) {
-        console.log("EL MALDITO ARRAY QUE NECESITO", data);
-        let aux = [];
-        Object.entries(data).forEach((element) => {
-          aux.push({ name: element[0], count: element[1] });
-        });
-        setYearPredicted(aux);
+      if (!yearPredicted) {
+        const { data, request } = await getSalesIA(token, false, "month", null, true);
+        if (request.ok) {
+          let aux = [];
+          Object.entries(data).forEach((element) => {
+            aux.push({ name: element[0], count: element[1] });
+          });
+          setYearPredicted(aux);
+        }
+      }
+
+      if (!actualYearSales) {
+        const { data, request } = await getSalesStatistic(token, 2022);
+        if (request.ok) {
+          setActualYearSales(data);
+        }
+      }
+
+      if(!biggestSale) {
+        const { data, request } = await getBiggestSale(token);
+        if (request.ok) {
+          setBiggestSale(data);
+        }
       }
     }
     fetchData();
@@ -92,19 +100,6 @@ const DashboardAdmin = () => {
     fetchData();
   }, [token, yearSales]);
 
-  useEffect(() => {
-    async function fetchData() {
-      const { data, request } = await getSalesStatistic(token, 2022);
-      if (request.ok) {
-        setActualYearSales(data);
-      }
-    }
-    fetchData();
-  }, [token]);
-
-  useEffect(() => {
-    console.log(radioOptionsSalesChart);
-  }, [radioOptionsSalesChart]);
 
   return (
     <>
@@ -125,7 +120,7 @@ const DashboardAdmin = () => {
                 <StatisticPanel value={monthSales} title="Cantidad de ventas en el mes" />
               </Grid>
               <Grid item xl={3} lg={3} sm={6} xs={12}>
-                <TotalCustomers biggestSale={"0001300"} />
+                <StatisticPanel value={biggestSale} title="Mayor venta historica" />
               </Grid>
               <Grid item xl={3} lg={3} sm={6} xs={12}>
                 <TasksProgress

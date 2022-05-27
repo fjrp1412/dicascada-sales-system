@@ -89,4 +89,23 @@ const getSalesStatistic = async (token,  year) => {
   }
 }
 
-export { getSales, getAllSales, getSalesIA, getSalesStatistic };
+const getBiggestSale = async (token) => {
+  const url = `${BASE_URL}sale/biggest-sale`;
+  try {
+    const request = await fetch(url, {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+    const data = await request.json();
+
+    console.log('biggest sale',data);
+
+    return { request, data };
+  } catch (e) {
+    return { request: { ok: false, message: e.message } };
+  }
+
+}
+
+export { getSales, getAllSales, getSalesIA, getSalesStatistic, getBiggestSale };
