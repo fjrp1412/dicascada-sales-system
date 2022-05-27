@@ -20,7 +20,7 @@ import { DashboardLayout } from "../components/dashboard-layout";
 import { AppContext } from "src/context/AppContext";
 import { ProductsList } from "../components/products/products-list";
 import { getProducts } from "../utils/api/products";
-import { getClients } from "../utils/api/clients";
+import { getClientIndicator } from "../utils/api/clients";
 import { FormSalesProductsModal } from "../components/sales/form-products-modal";
 
 const SaleRegister = () => {
@@ -39,7 +39,7 @@ const SaleRegister = () => {
   useEffect(() => {
     async function fetchData() {
       if (!clients) {
-        const { data, request } = await getClients(token, null);
+        const { data, request } = await getClientIndicator(token, null);
         if (request.ok) {
           setClients(data);
         }

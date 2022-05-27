@@ -81,7 +81,7 @@ const SalesList = (props) => {
                       <TableCell>
                         <SeverityPill
                           color={
-                            (sale.status === "delivered" && "success") ||
+                            (sale.status.toLowerCase() === "completed" && "success") ||
                             (sale.status === "refunded" && "error") ||
                             "warning"
                           }

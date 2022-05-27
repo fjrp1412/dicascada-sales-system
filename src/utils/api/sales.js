@@ -1,4 +1,4 @@
-const BASE_URL = "https://lambdaapi.azurewebsites.net/api/";
+const BASE_URL = "http://127.0.0.1:8000/api/";
 
 const getSales = async (token, nextUrl, query) => {
   console.log(nextUrl)
