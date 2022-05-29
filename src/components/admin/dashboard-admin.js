@@ -46,7 +46,6 @@ const DashboardAdmin = () => {
       if (!predictedMonth) {
         const { data, request } = await getSalesIA(token, false, "", 2, true);
         if (request.ok) {
-          console.log("next month preditcion", data);
           setPredictedMonth(data[0]);
         }
       }

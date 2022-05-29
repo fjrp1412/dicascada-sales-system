@@ -16,19 +16,23 @@ import {
 import { AppContext } from "../context/AppContext";
 import { getSalesmans } from "../utils/api/salesman";
 import { DashboardLayout } from "../components/dashboard-layout";
+import { getLocalStorage } from "../utils/helpers/localStorage";
 
 const SalesmanList = (props) => {
-  const { token } = useContext(AppContext);
   const [salesmans, setSalesmans] = useState(null);
   const [page, setPage] = useState(0);
+  const [token, setToken] = useState(null);
 
   const router = useRouter();
 
   useEffect(() => {
-    if (!token) {
+    const aux = getLocalStorage("token");
+    setToken(getLocalStorage("token"));
+    if (!aux) {
       router.push("/login");
     }
   }, []);
+
 
   useEffect(async () => {
     if (!salesmans) {

@@ -18,15 +18,19 @@ import { DashboardLayout } from "../components/dashboard-layout";
 import { getProducts } from "../utils/api/products";
 import { SeverityPill } from "../components/severity-pill";
 import { getSales } from "../utils/api/sales";
+import { getLocalStorage } from "../utils/helpers/localStorage";
 
 const SalesList = (props) => {
-  const { token, sales, setSales } = useContext(AppContext);
+  const { sales, setSales } = useContext(AppContext);
   const [page, setPage] = useState(0);
+  const [token, setToken] = useState(null);
 
   const router = useRouter();
 
   useEffect(() => {
-    if (!token) {
+    const aux = getLocalStorage("token");
+    setToken(getLocalStorage("token"));
+    if (!aux) {
       router.push("/login");
     }
   }, []);

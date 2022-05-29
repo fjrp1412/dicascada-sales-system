@@ -18,10 +18,10 @@ import {
 import { getSales } from "../../utils/api/sales";
 import { AppContext } from "../../context/AppContext";
 import { BarChartWithTable } from "../../components/charts/BarChartWithTable";
+import { getLocalStorage } from "../../utils/helpers/localStorage";
 
 const ClientDetail = () => {
   const router = useRouter();
-  const { token } = useContext(AppContext);
   const [client, setClient] = useState(null);
   const [indicator, setIndicator] = useState(null);
   const [statistic, setStatistic] = useState(null);
@@ -35,6 +35,7 @@ const ClientDetail = () => {
     category: "categories",
     product: "products",
   };
+  const [token, setToken] = useState(null);
 
   const handleChangeStatistic = (event) => {
     setStatisticType(event.target.value);
@@ -50,11 +51,14 @@ const ClientDetail = () => {
     setClientSales(data);
   };
 
+
   useEffect(() => {
-    if (!token) {
+    const aux = getLocalStorage("token");
+    setToken(getLocalStorage("token"));
+    if (!aux) {
       router.push("/login");
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     async function fetchData() {

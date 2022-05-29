@@ -16,18 +16,23 @@ import {
 import { AppContext } from "../context/AppContext";
 import { DashboardLayout } from "../components/dashboard-layout";
 import { getProducts } from "../utils/api/products";
+import { getLocalStorage } from "../utils/helpers/localStorage";
 
 const ProductsList = (props) => {
-  const { token, products, setProducts } = useContext(AppContext);
+  const { products, setProducts } = useContext(AppContext);
   const [page, setPage] = useState(0);
+  const [token, setToken] = useState(null);
 
   const router = useRouter();
 
   useEffect(() => {
-    if (!token) {
+    const aux = getLocalStorage("token");
+    setToken(getLocalStorage("token"));
+    if (!aux) {
       router.push("/login");
     }
   }, []);
+
 
   useEffect(() => {
     async function fetchData() {

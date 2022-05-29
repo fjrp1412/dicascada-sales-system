@@ -8,10 +8,10 @@ import { getProducts } from "../utils/api/products";
 import { ClientsList } from "../components/dashboard/clients-list";
 import { DashboardAdmin } from "../components/admin/dashboard-admin";
 import { DashboardSalesman } from "../components/salesman/dashboard-salesman";
+import { getLocalStorage } from "../utils/helpers/localStorage";
 
 const Dashboard = () => {
   const {
-    token,
     isAdmin,
     clients,
     setClients,
@@ -32,6 +32,8 @@ const Dashboard = () => {
   const router = useRouter();
 
   useEffect(() => {
+    const token = getLocalStorage("token");
+    console.log(token)
     if (!token) {
       router.push("/login");
     }
@@ -61,7 +63,7 @@ const Dashboard = () => {
   return (
     <>
       {(isAdmin && <DashboardAdmin />) ||
-        ((!isAdmin && loguedUser) && (
+        (!isAdmin && loguedUser && (
           <DashboardSalesman
             token={token}
             sales={sales}

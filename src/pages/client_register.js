@@ -1,4 +1,4 @@
-import { useEffect, useContext } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { useFormik } from "formik";
@@ -6,17 +6,19 @@ import * as Yup from "yup";
 import { Box, Button, Container, Grid, TextField, Typography } from "@mui/material";
 import { DashboardLayout } from "../components/dashboard-layout";
 import { AppContext } from "src/context/AppContext";
+import { getLocalStorage } from "../utils/helpers/localStorage";
 
 const ClientRegister = () => {
-  const { token } = useContext(AppContext);
+  const [token, setToken] = useState(null);
 
   const router = useRouter();
-  useEffect(() =>{
-  if(!token) {
-    router.push("/login");
-  }
-
-  }, [])
+  useEffect(() => {
+    const aux = getLocalStorage("token");
+    setToken(getLocalStorage("token"));
+    if (!aux) {
+      router.push("/login");
+    }
+  }, []);
 
   const formik = useFormik({
     initialValues: {

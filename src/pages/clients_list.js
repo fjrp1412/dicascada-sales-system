@@ -16,14 +16,18 @@ import {
 import { AppContext } from "../context/AppContext";
 import { DashboardLayout } from "../components/dashboard-layout";
 import { getClients, getClientIndicator } from "../utils/api/clients";
+import { getLocalStorage } from "../utils/helpers/localStorage";
 
 const ClientsList = (props) => {
-  const { token, clients, setClients } = useContext(AppContext);
+  const { clients, setClients } = useContext(AppContext);
   const [page, setPage] = useState(0);
   const router = useRouter();
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    if (!token) {
+    const aux = getLocalStorage("token");
+    setToken(getLocalStorage("token"));
+    if (!aux) {
       router.push("/login");
     }
   }, []);

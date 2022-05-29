@@ -22,19 +22,24 @@ import { ProductsList } from "../components/products/products-list";
 import { getProducts } from "../utils/api/products";
 import { getClientIndicator } from "../utils/api/clients";
 import { FormSalesProductsModal } from "../components/sales/form-products-modal";
+import { getLocalStorage } from "../utils/helpers/localStorage";
 
 const SaleRegister = () => {
   const router = useRouter();
   const [pageProducts, setPageProducts] = useState(0);
   const [productsCart, setProductsCart] = useState([]);
-  const { token, clients, loguedUser, products, setClients, setProducts } = useContext(AppContext);
+  const { clients, loguedUser, products, setClients, setProducts } = useContext(AppContext);
   const [openModal, setOpenModal] = useState(false);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    if (!token) {
+    const aux = getLocalStorage("token");
+    setToken(getLocalStorage("token"));
+    if (!aux) {
       router.push("/login");
     }
   }, []);
+
 
   useEffect(() => {
     async function fetchData() {

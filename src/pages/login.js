@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { Box, Button, Container, Grid, Link, TextField, Typography } from "@mui/material";
 import { login, getMe } from "../utils/api/user";
 import { AppContext } from "src/context/AppContext";
+import { setLocalStorage } from "../utils/helpers/localStorage";
 
 const Login = () => {
   const router = useRouter();
@@ -22,8 +23,9 @@ const Login = () => {
     onSubmit: async (form) => {
       const { data, request } = await login({ form });
       const token = data.token;
-      window.localStorage.setItem("token", token);
+      ("token", token);
       setToken(token);
+      setLocalStorage('token', token);
       if (request.ok) {
         const { request, data } = await getMe({ token });
         if (data.type.toLowerCase() !== "salesman") {
