@@ -19,6 +19,24 @@ const getSales = async (token, nextUrl, query) => {
   }
 };
 
+const getSale = async (token, id) => {
+  const url = `${BASE_URL}sale/${id}`;
+  try {
+    const request = await fetch(url, {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+    const data = await request.json();
+
+    console.log(data);
+
+    return { request, data };
+  } catch (e) {
+    return { request: { ok: false, message: e.message } };
+  }
+};
+
 const getAllSales = async (token, limit) => {
   const url = `${BASE_URL}sale/?limit=1`;
   console.log('limit' ,limit)
@@ -108,4 +126,4 @@ const getBiggestSale = async (token) => {
 
 }
 
-export { getSales, getAllSales, getSalesIA, getSalesStatistic, getBiggestSale };
+export { getSale ,getSales, getAllSales, getSalesIA, getSalesStatistic, getBiggestSale };

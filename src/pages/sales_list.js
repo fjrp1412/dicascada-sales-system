@@ -56,6 +56,10 @@ const SalesList = (props) => {
     setSales(data);
   };
 
+  const handleClick = (sale) => {
+    router.push(`/sale_detail/${sale.id}`);
+  }
+
   return (
     <DashboardLayout>
       <Card {...props}>
@@ -76,7 +80,8 @@ const SalesList = (props) => {
               <TableBody>
                 {sales &&
                   sales.results.map((sale) => (
-                    <TableRow hover key={sale.id}>
+                    <TableRow hover key={sale.id}
+                    onClick={() => handleClick(sale)}>
                       <TableCell>{sale.id}</TableCell>
                       <TableCell>{sale.date}</TableCell>
                       <TableCell>{sale.income}</TableCell>
