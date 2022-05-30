@@ -9,6 +9,7 @@ import { AppContext } from "../../context/AppContext";
 import { getSales } from "../../utils/api/sales";
 import { getOrders } from "../../utils/api/orders";
 import { getSalesmanIndicator, getSalesmanIA } from "../../utils/api/salesman";
+import { getClients } from "../../utils/api/clients";
 import { getProducts } from "../../utils/api/products";
 import { ClientsList } from "../dashboard/clients-list";
 import { StatisticPanel } from "../statistics/statistic_panel";
@@ -89,6 +90,13 @@ const DashboardSalesman = ({
         const { data, request } = await getSales(token, null, `date_start=2022-02-01&date_end=2022-03-01&limit=1&salesman${loguedUser.salesman.salesman.id}`);
         if (request.ok) {
           setSalesMonth(data.count);
+        }
+      }
+
+      if(!clients) {
+        const { data, request } = await getClients(token, null);
+        if (request.ok) {
+          setClients(data);
         }
       }
     }
