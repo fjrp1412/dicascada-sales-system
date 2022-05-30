@@ -32,6 +32,7 @@ const SaleDetail = () => {
   const [openModal, setOpenModal] = useState(false);
   const [token, setToken] = useState(null);
   const [sale, setSale] = useState(null);
+  const [order, setOrder] = useState([]);
 
   useEffect(() => {
     const aux = getLocalStorage("token");
@@ -43,12 +44,14 @@ const SaleDetail = () => {
 
   useEffect(() => {
     async function fetchData() {
-      if (!sale) {
+      console.log(router.isReady);
+      if (!sale && router.isReady) {
         console.log("query", router.query.sale);
         const { data, request } = await getSale(token, router.query.sale);
         console.log("sale", data);
         if (request.ok) {
           setSale(data);
+          setOrder(data.order);
         }
       }
 
@@ -64,7 +67,7 @@ const SaleDetail = () => {
     if (!sale || !products) {
       fetchData();
     }
-  }, [token]);
+  }, [token, router.isReady]);
 
   useEffect(() => {
     if (!productsCart.length && sale) {
@@ -213,22 +216,24 @@ const SaleDetail = () => {
                 <ProductsList
                   products={productsCart}
                   editable={true}
-                  headLabels={["Producto", "Cantidad", "Precio", "Total"]}
-                  productsFields={["name", "quantity", "typePrice", "total"]}
+                  headLabels={["Producto", "Cantidad", "Total"]}
+                  productsFields={["name", "quantity", "income"]}
                   page={pageProducts}
                   handlePageChange={handlePageChangeProducts}
                   handleRemove={handleRemoveProduct}
                 ></ProductsList>
 
-                <ProductsList
-                  products={productsCart}
-                  editable={true}
-                  headLabels={["Producto", "Cantidad", "Precio", "Total"]}
-                  productsFields={["name", "quantity", "typePrice", "total"]}
-                  page={pageProducts}
-                  handlePageChange={handlePageChangeProducts}
-                  handleRemove={handleRemoveProduct}
-                ></ProductsList>
+                {!Array.isArray(order) && (
+                  <ProductsList
+                    products={order.product}
+                    editable={true}
+                    headLabels={["Producto", "Cantidad", "Total"]}
+                    productsFields={["name", "quantity", "income"]}
+                    page={pageProducts}
+                    handlePageChange={handlePageChangeProducts}
+                    handleRemove={handleRemoveProduct}
+                  ></ProductsList>
+                )}
 
                 {sale.status.toLowerCase() !== "completed" && (
                   <>

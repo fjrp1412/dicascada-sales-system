@@ -7,9 +7,8 @@ import { ProductsList } from "../dashboard/products-list";
 import { DashboardLayout } from "../dashboard-layout";
 import { AppContext } from "../../context/AppContext";
 import { getSales } from "../../utils/api/sales";
-import { getOrders } from "../../utils/api/orders";
 import { getSalesmanIndicator, getSalesmanIA } from "../../utils/api/salesman";
-import { getClients } from "../../utils/api/clients";
+import { getClientIndicator } from "../../utils/api/clients";
 import { getProducts } from "../../utils/api/products";
 import { ClientsList } from "../dashboard/clients-list";
 import { StatisticPanel } from "../statistics/statistic_panel";
@@ -94,7 +93,7 @@ const DashboardSalesman = ({
       }
 
       if(!clients) {
-        const { data, request } = await getClients(token, null);
+        const { data, request } = await getClientIndicator(token, null);
         if (request.ok) {
           setClients(data);
         }
