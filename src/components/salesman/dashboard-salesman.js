@@ -7,10 +7,12 @@ import { ProductsList } from "../dashboard/products-list";
 import { DashboardLayout } from "../dashboard-layout";
 import { AppContext } from "../../context/AppContext";
 import { getSales } from "../../utils/api/sales";
+import { getOrders } from "../../utils/api/orders";
 import { getSalesmanIndicator, getSalesmanIA } from "../../utils/api/salesman";
 import { getProducts } from "../../utils/api/products";
 import { ClientsList } from "../dashboard/clients-list";
 import { StatisticPanel } from "../statistics/statistic_panel";
+import { getLocalStorage } from "../../utils/helpers/localStorage";
 
 const DashboardSalesman = ({
   pageSales,
@@ -22,7 +24,6 @@ const DashboardSalesman = ({
   user,
 }) => {
   const {
-    token,
     isAdmin,
     clients,
     setClients,
@@ -40,15 +41,23 @@ const DashboardSalesman = ({
   const [salesmanIndicator, setSalesmanIndicator] = useState(null);
   const [salesPredicted, setSalesPredicted] = useState(null);
   const [salesMonth, setSalesMonth] = useState(null);
+  const [token, setToken] = useState(null);
+  const [orders, setOrders] = useState(null);
+
+  useEffect(() => {
+    setToken(getLocalStorage("token"));
+  }, [])
 
   useEffect(() => {
     async function fetchData() {
       if (!sales) {
         const { data, request } = await getSales(token, null, `salesman=${loguedUser.salesman.salesman.id}`);
+        console.log('entrando en orders')
         if (request.ok) {
-          setSales(data);
+          setSales({...data, results: data.results.filter(sale => sale.status === 'COMPLETED')});
           setSalesCount(data.count);
-          console.log('filtered sales', data)
+          setOrders({...data, results: data.results.filter(sale => sale.status === 'PENDING')});
+          console.log('filtered orders', data)
         }
       }
       if (!products) {
@@ -140,6 +149,7 @@ const DashboardSalesman = ({
                     onChange={handleChangeTable}
                   >
                     <MenuItem value={"sales"}>Ventas</MenuItem>
+                    <MenuItem value={"orders"}>Ordenes de venta</MenuItem>
                     <MenuItem value={"products"}>Productos</MenuItem>
                     <MenuItem value={"clients"}>Clientes</MenuItem>
                   </Select>
@@ -148,6 +158,14 @@ const DashboardSalesman = ({
                 {sales && tableSelected === "sales" && (
                   <LatestOrders
                     sales={sales}
+                    handlePageChange={handlePageChangeSales}
+                    page={pageSales}
+                  />
+                )}
+
+                {orders && tableSelected === "orders" && (
+                  <LatestOrders
+                    sales={orders}
                     handlePageChange={handlePageChangeSales}
                     page={pageSales}
                   />

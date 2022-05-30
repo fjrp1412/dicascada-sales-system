@@ -29,14 +29,15 @@ const Dashboard = () => {
   const [pageProducts, setPageProducts] = useState(0);
   const [pageClients, setPageClients] = useState(0);
   const [allSales, setAllSales] = useState(null);
+  const [token, setToken] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
-    const token = getLocalStorage("token");
-    console.log(token)
-    if (!token) {
+    const aux = getLocalStorage("token");
+    if (!aux) {
       router.push("/login");
     }
+    setToken(aux);
   }, []);
 
   const handlePageChangeSales = async (event, newPage) => {

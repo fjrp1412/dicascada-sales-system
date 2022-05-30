@@ -13,10 +13,14 @@ const AppProvider = ({ children }) => {
   const [loguedUser, setLoguedUser] = useState(null);
   const [salesmans, setSalesmans] = useState(null);
   const [salesCount, setSalesCount] = useState(null);
+  const [orders, setOrders] = useState(null);
+  const [ordersCount, setOrdersCount] = useState(null);
 
 
   useEffect(() => {
     setValue({
+      orders,
+      setOrders,
       token,
       setToken,
       isAdmin,
@@ -35,8 +39,10 @@ const AppProvider = ({ children }) => {
       setSalesmans,
       salesCount,
       setSalesCount,
+      ordersCount,
+      setOrdersCount,
     });
-  }, [token, isAdmin, sales, userSales, products, clients, loguedUser, salesmans, salesCount]);
+  }, [token, isAdmin, sales, userSales, products, clients, loguedUser, salesmans, salesCount, orders, ordersCount]);
 
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
