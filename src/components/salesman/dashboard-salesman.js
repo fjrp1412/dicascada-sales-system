@@ -13,6 +13,7 @@ import { getProducts } from "../../utils/api/products";
 import { ClientsList } from "../dashboard/clients-list";
 import { StatisticPanel } from "../statistics/statistic_panel";
 import { getLocalStorage } from "../../utils/helpers/localStorage";
+import { Filter } from "../filter";
 
 const DashboardSalesman = ({
   pageSales,
@@ -43,27 +44,74 @@ const DashboardSalesman = ({
   const [salesMonth, setSalesMonth] = useState(null);
   const [token, setToken] = useState(null);
   const [orders, setOrders] = useState(null);
+  const [filteredSales, setFilteredSales] = useState(null);
+  const [filteredProducts, setFilteredProducts] = useState(null);
+  const [filteredClients, setFilteredClients] = useState(null);
 
   useEffect(() => {
     setToken(getLocalStorage("token"));
-  }, [])
+  }, []);
+
+  const handleFilter = async (query) => {
+    let aux = "";
+    console.log(query);
+    Object.entries(query).forEach((element) => {
+      aux = aux + `${element[0]}=${element[1]}&`;
+    });
+    console.log("aux", aux);
+
+    if (tableSelected === "sales") {
+      const { data, request } = await getSales(token, null, aux);
+      if (request.ok) {
+        setFilteredSales(data);
+      }
+    }
+
+    if (tableSelected === "products") {
+      const { data, request } = await getProducts(token, null, aux);
+      if (request.ok) {
+        setFilteredProducts(data);
+      }
+    }
+
+    if (tableSelected === "clients") {
+      const { data, request } = await getClientIndicator(token, null, aux);
+      if (request.ok) {
+        setFilteredClients(data);
+      }
+    }
+  };
+
+  const handleClear = () => {
+    setFilteredClients(clients);
+    setFilteredProducts(products);
+    setFilteredSales(sales);
+  };
 
   useEffect(() => {
     async function fetchData() {
       if (!sales) {
-        const { data, request } = await getSales(token, null, `salesman=${loguedUser.salesman.salesman.id}`);
-        console.log('entrando en orders')
+        const { data, request } = await getSales(
+          token,
+          null,
+          `salesman=${loguedUser.salesman.salesman.id}`
+        );
+        console.log("entrando en orders");
         if (request.ok) {
-          setSales({...data, results: data.results.filter(sale => sale.status === 'COMPLETED')});
+          setSales({
+            ...data,
+            results: data.results.filter((sale) => sale.status === "COMPLETED"),
+          });
           setSalesCount(data.count);
-          setOrders({...data, results: data.results.filter(sale => sale.status === 'PENDING')});
-          console.log('filtered orders', data)
+          setOrders({ ...data, results: data.results.filter((sale) => sale.status === "PENDING") });
+          setFilteredSales(data);
         }
       }
       if (!products) {
         const { data, request } = await getProducts(token, null);
         if (request.ok) {
           setProducts(data);
+          setFilteredProducts(data);
         }
       }
       if (!salesmanIndicator) {
@@ -73,7 +121,6 @@ const DashboardSalesman = ({
         );
         if (request.ok) {
           setSalesmanIndicator(data);
-          console.log("salesman indicator", data);
         }
       }
 
@@ -81,21 +128,25 @@ const DashboardSalesman = ({
         const { data, request } = await getSalesmanIA(token, loguedUser.salesman.salesman.id);
         if (request.ok) {
           setSalesPredicted(data);
-          console.log("salesman IA", data);
         }
       }
 
-      if(!salesMonth) {
-        const { data, request } = await getSales(token, null, `date_start=2022-02-01&date_end=2022-03-01&limit=1&salesman${loguedUser.salesman.salesman.id}`);
+      if (!salesMonth) {
+        const { data, request } = await getSales(
+          token,
+          null,
+          `date_start=2022-02-01&date_end=2022-03-01&limit=1&salesman${loguedUser.salesman.salesman.id}`
+        );
         if (request.ok) {
           setSalesMonth(data.count);
         }
       }
 
-      if(!clients) {
+      if (!clients) {
         const { data, request } = await getClientIndicator(token, null);
         if (request.ok) {
           setClients(data);
+          setFilteredClients(data);
         }
       }
     }
@@ -143,7 +194,10 @@ const DashboardSalesman = ({
                     />
                   </Grid>
                   <Grid item lg={3} sm={6} xl={3} xs={12}>
-                    <StatisticPanel title="Cantidad de ventas estimadas" value={Math.round(salesPredicted * 100) / 100} />
+                    <StatisticPanel
+                      title="Cantidad de ventas estimadas"
+                      value={Math.round(salesPredicted * 100) / 100}
+                    />
                   </Grid>
                 </>
               )}
@@ -162,12 +216,20 @@ const DashboardSalesman = ({
                   </Select>
                 </Grid>
 
-                {sales && tableSelected === "sales" && (
-                  <LatestOrders
-                    sales={sales}
-                    handlePageChange={handlePageChangeSales}
-                    page={pageSales}
-                  />
+                {filteredSales && tableSelected === "sales" && (
+                  <>
+                    <Filter
+                      fields={[{ title: "Factura", field: "id", type: "text" }]}
+                      onFilter={handleFilter}
+                      onClear={handleClear}
+                    ></Filter>
+
+                    <LatestOrders
+                      sales={filteredSales}
+                      handlePageChange={handlePageChangeSales}
+                      page={pageSales}
+                    />
+                  </>
                 )}
 
                 {orders && tableSelected === "orders" && (
@@ -178,20 +240,40 @@ const DashboardSalesman = ({
                   />
                 )}
 
-                {products && tableSelected === "products" && (
-                  <ProductsList
-                    products={products}
-                    handlePageChange={handlePageChangeProducts}
-                    page={pageProducts}
-                  />
+                {filteredProducts && tableSelected === "products" && (
+                  <>
+                    <Filter
+                      fields={[
+                        { title: "Nombre", field: "name", type: "text" },
+                        { title: "Categoria", field: "Category", type: "text" },
+                      ]}
+                      onFilter={handleFilter}
+                      onClear={handleClear}
+                    ></Filter>
+                    <ProductsList
+                      products={filteredProducts}
+                      handlePageChange={handlePageChangeProducts}
+                      page={pageProducts}
+                    />
+                  </>
                 )}
 
-                {clients && tableSelected === "clients" && (
-                  <ClientsList
-                    clients={clients}
-                    handlePageChange={handlePageChangeClients}
-                    page={pageClients}
-                  />
+                {filteredClients && tableSelected === "clients" && (
+                  <>
+                    <Filter
+                      fields={[
+                        { title: "Nombre", field: "name", type: "text" },
+                        { title: "Cedula/Rif", field: "identity_card", type: "text" },
+                      ]}
+                      onFilter={handleFilter}
+                      onClear={handleClear}
+                    ></Filter>
+                    <ClientsList
+                      clients={filteredClients}
+                      handlePageChange={handlePageChangeClients}
+                      page={pageClients}
+                    />
+                  </>
                 )}
               </Grid>
             </Grid>
