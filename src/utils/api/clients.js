@@ -1,8 +1,8 @@
 const BASE_URL = "http://127.0.0.1:8000/api/";
 
-const getClients = async (token, nextUrl) => {
+const getClients = async (token, nextUrl, query) => {
   console.log(nextUrl)
-  const url = `${nextUrl ? nextUrl : BASE_URL + `client/`  }`;
+  const url = `${nextUrl ? nextUrl : BASE_URL + `client/?${query}`}`;
   try {
     const request = await fetch(url, {
       headers: {

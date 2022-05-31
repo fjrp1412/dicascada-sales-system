@@ -17,12 +17,14 @@ import { AppContext } from "../context/AppContext";
 import { DashboardLayout } from "../components/dashboard-layout";
 import { getClients, getClientIndicator } from "../utils/api/clients";
 import { getLocalStorage } from "../utils/helpers/localStorage";
+import { Filter } from "../components/filter";
 
 const ClientsList = (props) => {
   const { clients, setClients } = useContext(AppContext);
   const [page, setPage] = useState(0);
   const router = useRouter();
   const [token, setToken] = useState(null);
+  const [filteredClients, setFilteredClients] = useState(null);
 
   useEffect(() => {
     const aux = getLocalStorage("token");
@@ -35,14 +37,38 @@ const ClientsList = (props) => {
   useEffect(() => {
     async function fetchData() {
       const { data, request } = await getClientIndicator(token, null);
-      if(request.ok) {
-        data.results = data.results.filter((element) => element.purchases > 8)
+      if (request.ok) {
+        data.results = data.results.filter((element) => element.purchases > 8);
         setClients(data);
       }
-      console.log('indicators', data)
+      console.log("indicators", data);
     }
-      fetchData();
+    fetchData();
   }, [token]);
+
+  useEffect(() => {
+    setFilteredClients(clients);
+  }, [clients]);
+
+  const handleFilter = async (query) => {
+    let aux = "";
+    console.log(query);
+    Object.entries(query).forEach((element) => {
+      aux = aux + `${element[0]}=${element[1]}&`;
+    });
+    console.log("aux", aux);
+
+    const { data, request } = await getClients(token, null, aux);
+    if (request.ok) {
+      setFilteredClients({ ...filteredClients, clients: data.results });
+    }
+    console.log('filtered results', data)
+    console.log('filtered results 2', filteredClients)
+  };
+
+  const handleClear = () => {
+    setFilteredClients(clients);
+  };
 
   const handlePageChange = async (event, newPage) => {
     const newUrl = newPage > page ? clients.next : clients.previous;
@@ -56,6 +82,14 @@ const ClientsList = (props) => {
       <Card {...props}>
         <CardHeader title="Lista de Clientes" />
         <Box sx={{ width: "100%" }}>
+          <Filter
+            fields={[
+              { title: "Nombre", field: "name", type: "text" },
+              { title: "Cedula/Rif", field: "identity_card", type: "text" },
+            ]}
+            onFilter={handleFilter}
+            onClear={handleClear}
+          ></Filter>
           <TableContainer sx={{ maxHeight: "100%", width: "100%" }}>
             <Table>
               <TableHead>
@@ -67,12 +101,13 @@ const ClientsList = (props) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {clients &&
-                  clients.results.map((client) => (
-                    <TableRow hover 
-                    key={client.client.id}
-                    onClick={() => router.push(`/client_detail/${client.client.id}`)}
-                    sx={{ cursor: "pointer" }}
+                {filteredClients &&
+                  filteredClients.results.map((client) => (
+                    <TableRow
+                      hover
+                      key={client.client.id}
+                      onClick={() => router.push(`/client_detail/${client.client.id}`)}
+                      sx={{ cursor: "pointer" }}
                     >
                       <TableCell>{client.client.name}</TableCell>
                       <TableCell>{client.client.identity_card}</TableCell>
@@ -83,7 +118,7 @@ const ClientsList = (props) => {
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  {clients && (
+                  {filteredClients && (
                     <TablePagination
                       colSpan={3}
                       count={clients.count}
