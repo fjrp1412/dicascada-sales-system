@@ -19,11 +19,13 @@ import { getProducts } from "../utils/api/products";
 import { SeverityPill } from "../components/severity-pill";
 import { getSales } from "../utils/api/sales";
 import { getLocalStorage } from "../utils/helpers/localStorage";
+import { Filter } from "../components/filter";
 
 const SalesList = (props) => {
   const { sales, setSales } = useContext(AppContext);
   const [page, setPage] = useState(0);
   const [token, setToken] = useState(null);
+  const [filteredSales, setFilteredSales] = useState(null);
 
   const router = useRouter();
 
@@ -37,17 +39,20 @@ const SalesList = (props) => {
 
   useEffect(() => {
     async function fetchData() {
-        const { data, request } = await getSales(token, null);
-        if (request.ok) {
-          setSales(data);
-        }
+      const { data, request } = await getSales(token, null);
+      if (request.ok) {
+        setSales(data);
       }
+    }
 
-      if(!sales) {
-        fetchData();
-      }
+    if (!sales) {
+      fetchData();
+    }
+  }, [token]);
 
-  }, [token])
+  useEffect(() => {
+    setFilteredSales(sales);
+  }, [sales])
 
   const handlePageChange = async (event, newPage) => {
     const newUrl = newPage > page ? sales.next : sales.previous;
@@ -58,6 +63,24 @@ const SalesList = (props) => {
 
   const handleClick = (sale) => {
     router.push(`/sale_detail/${sale.id}`);
+  };
+
+  const handleFilter = async (query) => {
+    let aux = "";
+    console.log(query);
+    Object.entries(query).forEach((element) => {
+      aux = aux + `${element[0]}=${element[1]}&`;
+    });
+    console.log('aux', aux);
+    
+    const { data, request } = await getSales(token, null, aux);
+    if (request.ok) {
+      setFilteredSales(data);
+     }
+  };
+
+  const handleClear = () => {
+    setFilteredSales(sales);
   }
 
   return (
@@ -65,6 +88,13 @@ const SalesList = (props) => {
       <Card {...props}>
         <CardHeader title="Lista de Ventas" />
         <Box sx={{ width: "100%" }}>
+          <Filter 
+          fields={[
+            { title: "Factura", field: "id", type: "text" },
+            ]}
+          onFilter={handleFilter}
+          onClear={handleClear}
+          ></Filter>
           <TableContainer sx={{ maxHeight: "100%", width: "100%" }}>
             <Table>
               <TableHead>
@@ -78,10 +108,9 @@ const SalesList = (props) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {sales &&
-                  sales.results.map((sale) => (
-                    <TableRow hover key={sale.id}
-                    onClick={() => handleClick(sale)}>
+                {filteredSales &&
+                  filteredSales.results.map((sale) => (
+                    <TableRow hover key={sale.id} onClick={() => handleClick(sale)}>
                       <TableCell>{sale.id}</TableCell>
                       <TableCell>{sale.date}</TableCell>
                       <TableCell>{sale.income}</TableCell>
@@ -103,10 +132,10 @@ const SalesList = (props) => {
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  {sales && (
+                  {filteredSales && (
                     <TablePagination
                       colSpan={3}
-                      count={sales.count}
+                      count={filteredSales.count}
                       rowsPerPage={100}
                       onPageChange={handlePageChange}
                       page={page}
