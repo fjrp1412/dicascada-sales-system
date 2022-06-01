@@ -1,7 +1,7 @@
 const BASE_URL = "http://127.0.0.1:8000/api/";
 
 const getClients = async (token, nextUrl, query) => {
-  console.log(nextUrl)
+  console.log(nextUrl);
   const url = `${nextUrl ? nextUrl : BASE_URL + `client/?${query}`}`;
   try {
     const request = await fetch(url, {
@@ -10,7 +10,6 @@ const getClients = async (token, nextUrl, query) => {
       },
     });
     const data = await request.json();
-
 
     return { request, data };
   } catch (e) {
@@ -31,10 +30,10 @@ const getClient = async (token, id) => {
   } catch (e) {
     return { request: { ok: false, message: e.message } };
   }
-} 
+};
 
 const getClientIndicator = async (token, id) => {
-  const url = `${BASE_URL + `client/indicator/${id ? id : ''}`}`;
+  const url = `${BASE_URL + `client/indicator/${id ? id : ""}`}`;
   try {
     const request = await fetch(url, {
       headers: {
@@ -46,14 +45,14 @@ const getClientIndicator = async (token, id) => {
   } catch (e) {
     return { request: { ok: false, message: e.message } };
   }
-}
+};
 
 const getClientStatistic = async (token, id, type) => {
   const url = `${BASE_URL + `client/statistic`}`;
   const body = {
-    'client_id': parseInt(id),
-    'type': type,
-  }
+    client_id: parseInt(id),
+    type: type,
+  };
 
   try {
     const request = await fetch(url, {
@@ -72,14 +71,14 @@ const getClientStatistic = async (token, id, type) => {
   } catch (e) {
     return { request: { ok: false, message: e.message } };
   }
-}
+};
 
 const getClientIA = async (token, id, income) => {
   const url = `${BASE_URL + `client/ia`}`;
   const body = {
-    'client_id': parseInt(id),
-    'income': !!income,
-  }
+    client_id: parseInt(id),
+    income: !!income,
+  };
   try {
     const request = await fetch(url, {
       method: "POST",
@@ -95,7 +94,25 @@ const getClientIA = async (token, id, income) => {
   } catch (e) {
     return { request: { ok: false, message: e.message } };
   }
-}
+};
 
+const createClient = async (token, body) => {
+  const url = `${BASE_URL + `client/`}`;
+  try {
+    const request = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await request.json();
 
-export { getClients, getClient, getClientIndicator, getClientStatistic, getClientIA };
+    return { request, data };
+  } catch (e) {
+    return { request: { ok: false, message: e.message } };
+  }
+};
+
+export { getClients, getClient, getClientIndicator, getClientStatistic, getClientIA, createClient };

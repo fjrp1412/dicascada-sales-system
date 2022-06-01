@@ -51,7 +51,6 @@ const ClientDetail = () => {
     setClientSales(data);
   };
 
-
   useEffect(() => {
     const aux = getLocalStorage("token");
     setToken(getLocalStorage("token"));
@@ -69,21 +68,21 @@ const ClientDetail = () => {
         }
       }
 
-      if(!indicator) {
+      if (!indicator) {
         const { data, request } = await getClientIndicator(token, router.query.client);
         if (request.ok) {
           setIndicator(data);
         }
       }
 
-      if(!clientSales) {
+      if (!clientSales) {
         const { data, request } = await getSales(token, null, `client=${router.query.client}`);
         if (request.ok) {
           setClientSales(data);
         }
       }
 
-      if(!incomePredicted) {
+      if (!incomePredicted) {
         const { data, request } = await getClientIA(token, router.query.client, true);
         if (request.ok) {
           setIncomePredicted(data);
@@ -98,7 +97,7 @@ const ClientDetail = () => {
   useEffect(() => {
     async function fetchData() {
       const { data, request } = await getClientStatistic(token, router.query.client, statisticType);
-      if (request.ok) {
+      if (request.ok && Object.entries(data).length !== 0) {
         const aux = data[router.query.client];
         const option = options[statisticType];
         setStatistic({ statistic: Object.values(aux[option]) });
@@ -106,7 +105,6 @@ const ClientDetail = () => {
     }
     fetchData();
   }, [token, statisticType]);
-
 
   return (
     <DashboardLayout>
@@ -126,24 +124,49 @@ const ClientDetail = () => {
               Detalle de Cliente
             </Typography>
             <Grid container spacing={3}>
-              <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <StatisticPanel value={indicator.purchases} title="Compras realizadas" />
-              </Grid>
-              <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <StatisticPanel value={`# ${indicator.biggest_sale}`} title="Compras mas alta" />
-              </Grid>{" "}
-              <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <StatisticPanel
-                  value={`${indicator.money_generated}$`}
-                  title="Ingresos generados"
-                />
-              </Grid>{" "}
-              <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <StatisticPanel
-                  value={`${Math.round(incomePredicted * 100) / 100}$`}
-                  title="Proyeccion monto siguiente compra"
-                />
-              </Grid>
+              {statistic ? (
+                <>
+                  {" "}
+                  <Grid item lg={3} sm={6} xl={3} xs={12}>
+                    <StatisticPanel value={indicator.purchases} title="Compras realizadas" />
+                  </Grid>
+                  <Grid item lg={3} sm={6} xl={3} xs={12}>
+                    <StatisticPanel
+                      value={`# ${indicator.biggest_sale}`}
+                      title="Compras mas alta"
+                    />
+                  </Grid>{" "}
+                  <Grid item lg={3} sm={6} xl={3} xs={12}>
+                    <StatisticPanel
+                      value={`${indicator.money_generated}$`}
+                      title="Ingresos generados"
+                    />
+                  </Grid>{" "}
+                  <Grid item lg={3} sm={6} xl={3} xs={12}>
+                    <StatisticPanel
+                      value={`${Math.round(incomePredicted * 100) / 100}$`}
+                      title="Proyeccion monto siguiente compra"
+                    />
+                  </Grid>
+                </>
+              ) : (
+                <>
+                  {" "}
+                  <Grid item lg={3} sm={6} xl={3} xs={12}>
+                    <StatisticPanel value={0} title="Compras realizadas" />
+                  </Grid>
+                  <Grid item lg={3} sm={6} xl={3} xs={12}>
+                    <StatisticPanel value="No hay compras registradas" title="Compras mas alta" />
+                  </Grid>{" "}
+                  <Grid item lg={3} sm={6} xl={3} xs={12}>
+                    <StatisticPanel value={`0$`} title="Ingresos generados" />
+                  </Grid>{" "}
+                  <Grid item lg={3} sm={6} xl={3} xs={12}>
+                    <StatisticPanel value={`0$`} title="Proyeccion monto siguiente compra" />
+                  </Grid>
+                </>
+              )}
+
               <Grid item lg={4} md={6} xs={12}>
                 <AccountProfile user={client} />
               </Grid>
@@ -161,16 +184,18 @@ const ClientDetail = () => {
                   <Skeleton variant="rectangular" width={210} height={118} />
                 )}
               </Grid>
-              <Grid item lg={12} md={12} xl={9} xs={12}>
-                <BarChartWithTable
-                  values={statistic}
-                  handleChange={handleChangeStatistic}
-                  statistic={statisticType}
-                  handleChangeVariable={handleChangeVariable}
-                  variable={variable}
-                  options={options}
-                />
-              </Grid>
+              {statistic && (
+                <Grid item lg={12} md={12} xl={9} xs={12}>
+                  <BarChartWithTable
+                    values={statistic}
+                    handleChange={handleChangeStatistic}
+                    statistic={statisticType}
+                    handleChangeVariable={handleChangeVariable}
+                    variable={variable}
+                    options={options}
+                  />
+                </Grid>
+              )}
             </Grid>
           </Container>
         </Box>

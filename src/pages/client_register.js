@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { Box, Button, Container, Grid, TextField, Typography } from "@mui/material";
 import { DashboardLayout } from "../components/dashboard-layout";
 import { AppContext } from "src/context/AppContext";
+import { createClient } from "../utils/api/clients";
 import { getLocalStorage } from "../utils/helpers/localStorage";
 
 const ClientRegister = () => {
@@ -32,9 +33,17 @@ const ClientRegister = () => {
       identity_card: Yup.string().required("Cedula o Rif requerido"),
       name: Yup.string().required("Nombre del cliente requerido"),
       phone: Yup.string().required("Telefono requerido"),
+      address: Yup.string().required("Direccion requerida"),
     }),
     onSubmit: async (form) => {
-      console.log(form);
+      console.log('formulario cliente', form);
+      const {data, request} = await createClient(token, form);
+      console.log('cliente', data)
+
+      if(request.ok) {
+        router.push("/");
+      }
+
     },
   });
 
@@ -64,9 +73,9 @@ const ClientRegister = () => {
               <Grid container spacing={3}></Grid>
 
               <TextField
-                error={Boolean(formik.touched.id && formik.errors.id)}
+                error={Boolean(formik.touched.name && formik.errors.name)}
                 fullWidth
-                helperText={formik.touched.id && formik.errors.id}
+                helperText={formik.touched.name && formik.errors.name}
                 label="Nombre"
                 margin="normal"
                 name="name"
@@ -77,6 +86,8 @@ const ClientRegister = () => {
                 variant="outlined"
               />
               <TextField
+                error={Boolean(formik.touched.identity_card && formik.errors.identity_card)}
+                helperText={formik.touched.identity_card && formik.errors.identity_card}
                 fullWidth
                 label="Cedula o Rif"
                 margin="normal"
@@ -89,8 +100,10 @@ const ClientRegister = () => {
               />
 
               <TextField
+                error={Boolean(formik.touched.address && formik.errors.address)}
+                helperText={formik.touched.address && formik.errors.address}
                 fullWidth
-                label="Address"
+                label="Direccion"
                 margin="normal"
                 name="address"
                 onBlur={formik.handleBlur}
@@ -101,6 +114,8 @@ const ClientRegister = () => {
               />
 
               <TextField
+                error={Boolean(formik.touched.phone && formik.errors.phone)}
+                helperText={formik.touched.phone && formik.errors.phone}
                 fullWidth
                 label="Numero de tlf"
                 margin="normal"
