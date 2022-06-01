@@ -42,6 +42,8 @@ const DashboardSalesman = ({
   const [salesmanIndicator, setSalesmanIndicator] = useState(null);
   const [salesPredicted, setSalesPredicted] = useState(null);
   const [salesMonth, setSalesMonth] = useState(null);
+  const [salesMonthIncomePredicted, setSalesMonthIncomePredicted] = useState(null);
+  const [salesMonthIncome, setSalesMonthIncome] = useState(null);
   const [token, setToken] = useState(null);
   const [orders, setOrders] = useState(null);
   const [filteredSales, setFilteredSales] = useState(null);
@@ -96,7 +98,6 @@ const DashboardSalesman = ({
           null,
           `salesman=${loguedUser.salesman.salesman.id}`
         );
-        console.log("entrando en orders");
         if (request.ok) {
           setSales({
             ...data,
@@ -107,6 +108,7 @@ const DashboardSalesman = ({
           setFilteredSales(data);
         }
       }
+
       if (!products) {
         const { data, request } = await getProducts(token, null);
         if (request.ok) {
@@ -114,6 +116,7 @@ const DashboardSalesman = ({
           setFilteredProducts(data);
         }
       }
+
       if (!salesmanIndicator) {
         const { data, request } = await getSalesmanIndicator(
           token,
@@ -142,6 +145,13 @@ const DashboardSalesman = ({
         }
       }
 
+      if (!salesMonthIncomePredicted) {
+        const { data, request } = await getSalesmanIA(token, loguedUser.salesman.salesman.id, true);
+        if (request.ok) {
+          setSalesMonthIncomePredicted(data);
+        }
+      }
+
       if (!clients) {
         const { data, request } = await getClientIndicator(token, null);
         if (request.ok) {
@@ -153,9 +163,35 @@ const DashboardSalesman = ({
     fetchData();
   }, [token]);
 
+  useEffect(() => {
+    let summ = 0;
+
+    console.log("a", sales);
+
+    for (let i = 0; i < sales.results.length; i++) {
+      const aux_date = new Date(sales.results[i].date);
+      if (aux_date.getUTCMonth() === 1) {
+        summ += parseFloat(sales.results[i].income);
+      }
+      setSalesMonthIncome(summ);
+    }
+  }, [sales]);
+
   const handleChangeTable = (event) => {
     setTableSelected(event.target.value);
   };
+
+  useEffect(() => {
+    setFilteredClients(clients);
+  }, [clients]);
+
+  useEffect(() => {
+    setFilteredProducts(products);
+  }, [products]);
+
+  useEffect(() => {
+    setFilteredSales(sales);
+  }, [sales]);
 
   return (
     <>
@@ -176,27 +212,32 @@ const DashboardSalesman = ({
                 <>
                   <Grid item lg={3} sm={6} xl={3} xs={12}>
                     <StatisticPanel
-                      title="Cantidad de ventas"
-                      value={salesmanIndicator.purchases}
+                      title="Ingresos generados del mes"
+                      value={`${Math.round(salesMonthIncome * 100) / 100}$`}
+                      subTitle="Cantidad de ventas del mes del vendedor"
+                      valueSubTitle={salesMonth}
                     />
                   </Grid>
-                  <Grid item xl={3} lg={3} sm={6} xs={12}>
+                  <Grid item lg={3} sm={6} xl={3} xs={12}>
                     <StatisticPanel
-                      title="Venta mas alta"
-                      value={`#${salesmanIndicator.biggest_sale}`}
+                      title="Cantidad de ventas del mes esperadas"
+                      value={Math.round(salesPredicted * 100) / 100}
+                      subTitle="Ingresos esperados generados por el vendedor"
+                      valueSubTitle={Math.round(salesMonthIncomePredicted * 100) / 100}
                     />
                   </Grid>
                   <Grid item xl={3} lg={3} sm={6} xs={12}>
                     <TasksProgress
-                      task="Cantidad de ventas esperadas"
+                      task="Progreso del objetivo del mes del vendedor"
                       goal={salesPredicted}
                       current={salesMonth}
                     />
                   </Grid>
                   <Grid item lg={3} sm={6} xl={3} xs={12}>
-                    <StatisticPanel
-                      title="Cantidad de ventas estimadas"
-                      value={Math.round(salesPredicted * 100) / 100}
+                    <TasksProgress
+                      task="Progreso del objetivo del mes del vendedor"
+                      goal={salesMonthIncomePredicted}
+                      current={salesMonthIncome}
                     />
                   </Grid>
                 </>

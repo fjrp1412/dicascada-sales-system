@@ -16,9 +16,10 @@ export const TasksProgress = (props) => {
       >
         <Grid item>
           <Typography
-            color="textSecondary"
+            color="textPrimary"
             gutterBottom
             variant="overline"
+            sx={{ fontSize: '1rem' }}
           >
           { task }
           </Typography>
@@ -29,9 +30,16 @@ export const TasksProgress = (props) => {
             {Math.round((current * 100 / goal) * 100) / 100}%
           </Typography>
           <Typography
-            color="textPrimary"
+            color="textSecondary"
             variant="h6"
           >
+          Meta: {Math.round(goal * 100) / 100}
+          </Typography>
+          <Typography
+            color="textSecondary"
+            variant="h6"
+          >
+          Actual: {Math.round(current * 100) / 100}
           </Typography>
         </Grid>
         <Grid item>

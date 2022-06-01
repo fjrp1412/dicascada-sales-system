@@ -2,7 +2,7 @@ import { Avatar, Box, Card, CardContent, Grid, Typography } from '@mui/material'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import MoneyIcon from '@mui/icons-material/Money';
 
-export const StatisticPanel = ({ title, value }) => {
+export const StatisticPanel = ({ title, value, subTitle, valueSubTitle }) => {
 return (
   <Card
     sx={{ height: '100%' }}
@@ -15,7 +15,7 @@ return (
       >
         <Grid item>
           <Typography
-            color="textSecondary"
+            color="textPrimary"
             gutterBottom
             variant="overline"
             sx={{ fontSize: '1rem' }}
@@ -30,25 +30,33 @@ return (
           </Typography>
         </Grid>
         <Grid item>
+          <Typography
+            color="textPrimary"
+            gutterBottom
+            variant="overline"
+            sx={{ fontSize: '1rem' }}
+          >
+          { subTitle }
+          </Typography>
+          <Typography
+            color="textPrimary"
+            variant="h4"
+          >
+           { valueSubTitle } 
+          </Typography>
+        </Grid>
+        <Grid item>
           <Avatar
             sx={{
               backgroundColor: 'error.main',
               height: 56,
-              width: 56
+              width: 56,
             }}
           >
             <MoneyIcon />
           </Avatar>
         </Grid>
       </Grid>
-      <Box
-        sx={{
-          pt: 2,
-          display: 'flex',
-          alignItems: 'center'
-        }}
-      >
-      </Box>
     </CardContent>
   </Card>
 );
