@@ -22,7 +22,7 @@ import { StatisticPanel } from "../statistics/statistic_panel";
 import { getLocalStorage } from "../../utils/helpers/localStorage";
 
 const DashboardAdmin = () => {
-  const token =  getLocalStorage('token');
+  const token = getLocalStorage("token");
   const [filteredDateSales, setFilteredDateSales] = useState(null);
   const [page, setPage] = useState(0);
   const [monthSales, setMonthSales] = useState(null);
@@ -33,6 +33,8 @@ const DashboardAdmin = () => {
   const [actualYearSales, setActualYearSales] = useState(null);
   const [radioOptionsSalesChart, setRadioOptionsSalesChart] = useState({ predicted: true });
   const [biggestSale, setBiggestSale] = useState(null);
+  const [salesMonthIncome, setSalesMonthIncome] = useState(null);
+  const [salesMonthIncomePredicted, setSalesMonthIncomePredicted] = useState(null);
 
   const handlePageChange = async (event, newPage) => {
     setPage(newPage);
@@ -48,6 +50,14 @@ const DashboardAdmin = () => {
         if (request.ok) {
           setPredictedMonth(data[0]);
         }
+      }
+
+      if (!salesMonthIncomePredicted) {
+        const { data, request } = await getSalesIA(token, true, "", 2, true);
+        if (request.ok) {
+          setSalesMonthIncomePredicted(data);
+        }
+        console.log("income sales month predicted", data);
       }
 
       if (!filteredDateSales && !monthSales) {
@@ -80,7 +90,7 @@ const DashboardAdmin = () => {
         }
       }
 
-      if(!biggestSale) {
+      if (!biggestSale) {
         const { data, request } = await getBiggestSale(token);
         if (request.ok) {
           setBiggestSale(data);
@@ -91,6 +101,22 @@ const DashboardAdmin = () => {
   }, [token]);
 
   useEffect(() => {
+    let summ = 0;
+
+    console.log("a", filteredDateSales);
+
+    if (filteredDateSales) {
+      for (let i = 0; i < filteredDateSales.results.length; i++) {
+        const aux_date = new Date(filteredDateSales.results[i].date);
+        if (aux_date.getUTCMonth() === 1) {
+          summ += parseFloat(filteredDateSales.results[i].income);
+        }
+        setSalesMonthIncome(summ);
+      }
+    }
+  }, [filteredDateSales]);
+
+  useEffect(() => {
     async function fetchData() {
       const { data, request } = await getSalesStatistic(token, yearSales);
       if (request.ok) {
@@ -99,7 +125,6 @@ const DashboardAdmin = () => {
     }
     fetchData();
   }, [token, yearSales]);
-
 
   return (
     <>
@@ -117,20 +142,34 @@ const DashboardAdmin = () => {
           <Container maxWidth={false}>
             <Grid container spacing={3}>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <StatisticPanel value={monthSales} title="Cantidad de ventas en el mes" />
+                <StatisticPanel
+                  title="Ingresos generados del mes"
+                  value={`${Math.round(salesMonthIncome * 100) / 100}$`}
+                  subTitle="Cantidad de ventas del mes"
+                  valueSubTitle={monthSales}
+                />
               </Grid>
-              <Grid item xl={3} lg={3} sm={6} xs={12}>
-                <StatisticPanel value={biggestSale} title="Mayor venta historica" />
-              </Grid>
+                  <Grid item lg={3} sm={6} xl={3} xs={12}>
+                    <StatisticPanel
+                      title="Ingresos esperados generados por el vendedor"
+                      value={Math.round(salesMonthIncomePredicted * 100) / 100}
+                      subTitle="Ingresos esperados generados por el vendedor"
+                      valueSubTitle={Math.round(predictedMonth* 100) / 100}
+                    />
+                  </Grid>
               <Grid item xl={3} lg={3} sm={6} xs={12}>
                 <TasksProgress
-                  task="Porcentaje del objetivo de ventas en el mes"
+                  task="Progreso del objetivo del mes de la empresa, cantidad de ventas"
                   goal={predictedMonth}
                   current={monthSales}
                 />
               </Grid>
-              <Grid item xl={3} lg={3} sm={6} xs={12}>
-                <StatisticPanel value={predictedMonth} title="Cantidad esperada de ventas" />
+              <Grid item lg={3} sm={6} xl={3} xs={12}>
+                <TasksProgress
+                  task="Progreso del objetivo del mes de la empresa, ingresos generados"
+                  goal={salesMonthIncomePredicted}
+                  current={salesMonthIncome}
+                />
               </Grid>
 
               <Grid item lg={12} md={12} xl={9} xs={12}>
