@@ -41,7 +41,7 @@ const SalesList = (props) => {
     async function fetchData() {
       const { data, request } = await getSales(token, null);
       if (request.ok) {
-        setSales(data);
+        setSales({...data, results: data.results.filter((sale) => sale.status === "COMPLETED")});
       }
     }
 

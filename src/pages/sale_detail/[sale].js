@@ -20,7 +20,7 @@ import { DashboardLayout } from "../../components/dashboard-layout";
 import { AppContext } from "src/context/AppContext";
 import { ProductsList } from "../../components/products/products-list";
 import { getProducts } from "../../utils/api/products";
-import { getSale } from "../../utils/api/sales";
+import { getSale, updateSale } from "../../utils/api/sales";
 import { FormSalesProductsModal } from "../../components/sales/form-products-modal";
 import { getLocalStorage } from "../../utils/helpers/localStorage";
 
@@ -33,6 +33,7 @@ const SaleDetail = () => {
   const [token, setToken] = useState(null);
   const [sale, setSale] = useState(null);
   const [order, setOrder] = useState([]);
+  const [status, setStatus] = useState(null);
 
   useEffect(() => {
     const aux = getLocalStorage("token");
@@ -52,6 +53,8 @@ const SaleDetail = () => {
         if (request.ok) {
           setSale(data);
           setOrder(data.order);
+          console.log('order' ,data.order);
+          setStatus(data.status);
         }
       }
 
@@ -75,6 +78,10 @@ const SaleDetail = () => {
     }
   }, [sale]);
 
+  const handleChangeStatus = (e) => {
+    setStatus(e.target.value);
+  }
+
   const handlePageChangeProducts = async (event, newPage) => {
     const newUrl = newPage > pageProducts ? productsCart.next : productsCart.previous;
     setPageProducts(newPage);
@@ -94,15 +101,16 @@ const SaleDetail = () => {
       income: sale ? sale.income : "",
       client: sale ? sale.client.name : "",
       income_currency: "USD",
-      products: sale ? sale.product : [],
+      product: sale ? sale.product : [],
       salesman: sale ? sale.salesman.name : "",
       status: sale ? sale.status : "",
     },
-    validationSchema: Yup.object({
-      id: Yup.string().required("Numero de factura requerido"),
-    }),
+    validationSchema: Yup.object({}),
     onSubmit: async (form) => {
-      console.log(form);
+      form.product = [...productsCart];
+      form.id = sale.id;
+      form.status = status;
+      console.log('form sale', form)
     },
   });
 
@@ -173,18 +181,18 @@ const SaleDetail = () => {
                   variant="outlined"
                 />
 
-                <TextField
+                <InputLabel id="label-status">Estado</InputLabel>
+                <Select
+                  value={status}
+                  sx={{ border: "1px solid #ced4da", marginBottom: 1 }}
                   fullWidth
-                  label="Estado"
-                  margin="normal"
-                  name="status"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  disabled={isAdmin ? false : true}
-                  type="text"
-                  value={sale.status}
-                  variant="outlined"
-                />
+                  labelId="label-status"
+                  onChange={handleChangeStatus}
+                  disabled={!isAdmin || sale.status === "COMPLETED"}
+                >
+                  <MenuItem value="PENDING">PENDIENTE</MenuItem>
+                  <MenuItem value="COMPLETED">COMPLETADO</MenuItem>
+                </Select>
 
                 <InputLabel id="label-client">Cliente</InputLabel>
                 <TextField
@@ -212,28 +220,27 @@ const SaleDetail = () => {
                   variant="outlined"
                   disabled
                 ></TextField>
+                {!Array.isArray(order) && order && (
+                  <ProductsList
+                    products={order.product}
+                    headLabels={["Producto", "Cantidad", "Total"]}
+                    productsFields={["name", "quantity", "income"]}
+                    page={pageProducts}
+                    handlePageChange={handlePageChangeProducts}
+                    handleRemove={handleRemoveProduct}
+                    title="Productos de la orden"
+                  ></ProductsList>
+                )}
 
                 <ProductsList
                   products={productsCart}
-                  editable={true}
+                  editable={isAdmin || sale.status !== "COMPLETED"}
                   headLabels={["Producto", "Cantidad", "Total"]}
                   productsFields={["name", "quantity", "income"]}
                   page={pageProducts}
                   handlePageChange={handlePageChangeProducts}
                   handleRemove={handleRemoveProduct}
                 ></ProductsList>
-
-                {!Array.isArray(order) && (
-                  <ProductsList
-                    products={order.product}
-                    editable={true}
-                    headLabels={["Producto", "Cantidad", "Total"]}
-                    productsFields={["name", "quantity", "income"]}
-                    page={pageProducts}
-                    handlePageChange={handlePageChangeProducts}
-                    handleRemove={handleRemoveProduct}
-                  ></ProductsList>
-                )}
 
                 {sale.status.toLowerCase() !== "completed" && (
                   <>

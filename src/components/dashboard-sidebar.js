@@ -50,6 +50,12 @@ const items = [
     admin: false,
   },
   {
+    href: "/orders_list",
+    icon: <UsersIcon fontSize="small" />,
+    title: "Lista De Ordenes de venta",
+    admin: false,
+  },
+  {
     href: "/clients_list",
     icon: <UsersIcon fontSize="small" />,
     title: "Lista De Clientes",

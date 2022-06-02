@@ -49,7 +49,7 @@ export const FormSalesProductsModal = ({ open, handleClose, setCartProducts, car
         product: product.id,
         name: product.name,
         quantity: form.quantity,
-        total: parseFloat(product[form.price]) * form.quantity,
+        income: parseFloat(product[form.price]) * form.quantity,
         price: Math.round(form.price * 100) / 100,
         typePrice: typePrice
     }]

@@ -15,13 +15,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 export const ProductsList = (props) => {
-  const { products, handlePageChange, page, headLabels, pagination, productsFields, editable, handleRemove } =
+  const { title ,products, handlePageChange, page, headLabels, pagination, productsFields, editable, handleRemove } =
     props;
 
   console.log('products', products)
   return (
     <Card {...props}>
-      <CardHeader title="Lista de Productos" />
+      <CardHeader title={title ? title : "Lista de Productos"} />
       <Box sx={{ width: "100%" }}>
         <TableContainer sx={{ maxHeight: 600, width: "100%" }}>
           <Table>

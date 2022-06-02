@@ -92,25 +92,5 @@ const createOrder = async (token, body) => {
     return { request: { ok: false, message: e.message } };
   }
 }
-const createOrderProduct = async (token, body) => {
-  const url = `${BASE_URL}order/product-order`;
-  try{
-    request = await fetch(url, {
-        method: "POST",
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(products),
-    })
-
-      console.log('request de products', request)
-
-  } catch (e) {
-
-    return { request: { ok: false, message: e.message } };
-  }
-}
-
 
 export { getOrders, getOrder, createOrder };

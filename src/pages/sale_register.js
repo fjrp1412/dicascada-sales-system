@@ -69,7 +69,7 @@ const SaleRegister = () => {
     let aux = 0;
 
     productsCart.forEach((product) => {
-      aux += product.total;
+      aux += product.income;
     });
 
     setIncome(Math.round(aux * 100) / 100);
@@ -241,7 +241,7 @@ const SaleRegister = () => {
                   products={productsCart}
                   editable={true}
                   headLabels={["Producto", "Cantidad", "Precio", "Total"]}
-                  productsFields={["name", "quantity", "typePrice", "total"]}
+                  productsFields={["name", "quantity", "typePrice", "income"]}
                   page={pageProducts}
                   handlePageChange={handlePageChangeProducts}
                   handleRemove={handleRemoveProduct}

@@ -126,4 +126,9 @@ const getBiggestSale = async (token) => {
 
 }
 
-export { getSale ,getSales, getAllSales, getSalesIA, getSalesStatistic, getBiggestSale };
+const updateSale = async (token, body) => {
+  console.log('update Sale body', body);
+
+}
+
+export { getSale ,getSales, getAllSales, getSalesIA, getSalesStatistic, getBiggestSale, updateSale  };
