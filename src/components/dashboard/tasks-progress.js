@@ -27,7 +27,7 @@ export const TasksProgress = (props) => {
             color="textPrimary"
             variant="h4"
           >
-            {Math.round((current * 100 / goal) * 100) / 100}%
+            {goal > 0 ? `${Math.round((current * 100 / goal) * 100) / 100}%` : "No hay objetivo"}
           </Typography>
           <Typography
             color="textSecondary"

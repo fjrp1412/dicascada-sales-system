@@ -134,6 +134,7 @@ const ClientDetail = () => {
     async function fetchData() {
       const { data, request } = await getClientStatistic(token, router.query.client, statisticType);
       if (request.ok && Object.entries(data).length !== 0) {
+        console.log("data", data);
         const aux = data[router.query.client];
         const option = options[statisticType];
         setStatistic({ statistic: Object.values(aux[option]) });
