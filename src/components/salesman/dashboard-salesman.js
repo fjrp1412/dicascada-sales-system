@@ -37,6 +37,7 @@ const DashboardSalesman = ({
     setSales,
     salesCount,
     setSalesCount,
+    setIsAdmin,
   } = useContext(AppContext);
 
   const [tableSelected, setTableSelected] = useState("sales");
@@ -168,6 +169,16 @@ const DashboardSalesman = ({
         if (request.ok) {
           setClients(data);
           setFilteredClients(data);
+        }
+      }
+
+      if(!loguedUser) {
+        const { data, request } = await getMe({ token });
+        if (request.ok) {
+          setLoguedUser(data);
+          if (data.type.toLowerCase() !== "salesman") {
+            setIsAdmin(true);
+          }
         }
       }
     }

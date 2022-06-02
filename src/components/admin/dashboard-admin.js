@@ -20,6 +20,7 @@ import { getSales, getSalesIA, getSalesStatistic, getBiggestSale } from "../../u
 import { LineChartComponent } from "../charts/SalesLineChart";
 import { StatisticPanel } from "../statistics/statistic_panel";
 import { getLocalStorage } from "../../utils/helpers/localStorage";
+import { getMe } from "../../utils/api/user";
 
 const DashboardAdmin = () => {
   const token = getLocalStorage("token");
@@ -35,7 +36,7 @@ const DashboardAdmin = () => {
   const [biggestSale, setBiggestSale] = useState(null);
   const [salesMonthIncome, setSalesMonthIncome] = useState(null);
   const [salesMonthIncomePredicted, setSalesMonthIncomePredicted] = useState(null);
-
+  const { setIsAdmin, loguedUser } = useContext(AppContext);
   const handlePageChange = async (event, newPage) => {
     setPage(newPage);
     const newUrl = newPage > page ? filteredDateSales.next : filteredDateSales.previous;
@@ -96,6 +97,16 @@ const DashboardAdmin = () => {
           setBiggestSale(data);
         }
       }
+
+      if (!loguedUser) {
+        const { data, request } = await getMe({ token });
+        if (request.ok) {
+          setLoguedUser(data);
+          if (data.type.toLowerCase() !== "salesman") {
+            setIsAdmin(true);
+          }
+        }
+      }
     }
     fetchData();
   }, [token]);
@@ -149,14 +160,14 @@ const DashboardAdmin = () => {
                   valueSubTitle={monthSales}
                 />
               </Grid>
-                  <Grid item lg={3} sm={6} xl={3} xs={12}>
-                    <StatisticPanel
-                      title="Ingresos esperados en el mes"
-                      value={`${Math.round(salesMonthIncomePredicted * 100) / 100}$`}
-                      subTitle="Cantidad de ventas esperadas en el mes"
-                      valueSubTitle={Math.round(predictedMonth* 100) / 100}
-                    />
-                  </Grid>
+              <Grid item lg={3} sm={6} xl={3} xs={12}>
+                <StatisticPanel
+                  title="Ingresos esperados en el mes"
+                  value={`${Math.round(salesMonthIncomePredicted * 100) / 100}$`}
+                  subTitle="Cantidad de ventas esperadas en el mes"
+                  valueSubTitle={Math.round(predictedMonth * 100) / 100}
+                />
+              </Grid>
               <Grid item xl={3} lg={3} sm={6} xs={12}>
                 <TasksProgress
                   task="Progreso del objetivo del mes de la empresa, cantidad de ventas"

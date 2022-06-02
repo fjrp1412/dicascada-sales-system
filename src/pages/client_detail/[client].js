@@ -20,10 +20,11 @@ import { AppContext } from "../../context/AppContext";
 import { BarChartWithTable } from "../../components/charts/BarChartWithTable";
 import { getLocalStorage } from "../../utils/helpers/localStorage";
 import { TasksProgress } from "../../components/dashboard/tasks-progress";
+import { getMe } from "../../utils/api/user";
 
 const ClientDetail = () => {
   const router = useRouter();
-  const { isAdmin } = useContext(AppContext);
+  const { isAdmin, loguedUser, setLoguedUser, setIsAdmin } = useContext(AppContext);
   const [client, setClient] = useState(null);
   const [indicator, setIndicator] = useState(null);
   const [statistic, setStatistic] = useState(null);
@@ -72,6 +73,17 @@ const ClientDetail = () => {
         const { data, request } = await getClient(token, router.query.client);
         if (request.ok) {
           setClient(data);
+        }
+      }
+
+      if (!loguedUser) {
+        const { data, request } = await getMe({ token });
+        console.log("user", data);
+        if (request.ok) {
+          setLoguedUser(data);
+          if (data.type.toLowerCase() !== "salesman") {
+            setIsAdmin(true);
+          }
         }
       }
 
@@ -128,12 +140,12 @@ const ClientDetail = () => {
     if (!client || !indicator || !clientSales || !incomePredicted) {
       fetchData();
     }
-  }, [token]);
+  }, [token, router]);
 
   useEffect(() => {
     async function fetchData() {
       const { data, request } = await getClientStatistic(token, router.query.client, statisticType);
-      if (request.ok && Object.entries(data).length !== 0) {
+      if (request.ok && Object.entries(data).length !== 0 && router.query.client) {
         console.log("data", data);
         const aux = data[router.query.client];
         const option = options[statisticType];
@@ -141,7 +153,7 @@ const ClientDetail = () => {
       }
     }
     fetchData();
-  }, [token, statisticType]);
+  }, [token, statisticType, router]);
 
   return (
     <DashboardLayout>

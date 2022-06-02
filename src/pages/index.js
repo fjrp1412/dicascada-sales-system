@@ -9,6 +9,7 @@ import { ClientsList } from "../components/dashboard/clients-list";
 import { DashboardAdmin } from "../components/admin/dashboard-admin";
 import { DashboardSalesman } from "../components/salesman/dashboard-salesman";
 import { getLocalStorage } from "../utils/helpers/localStorage";
+import { getMe } from '../utils/api/user'
 
 const Dashboard = () => {
   const {
@@ -23,6 +24,7 @@ const Dashboard = () => {
     setSales,
     salesCount,
     setSalesCount,
+    setIsAdmin,
   } = useContext(AppContext);
 
   const [pageSales, setPageSales] = useState(0);
@@ -39,6 +41,25 @@ const Dashboard = () => {
     }
     setToken(aux);
   }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!loguedUser) {
+        const { data, request } = await getMe({ token });
+        if (request.ok) {
+          setLoguedUser(data);
+          if (data.type.toLowerCase() !== "salesman") {
+            console.log('ES ADMIN')
+            setIsAdmin(true);
+          }
+        }
+      }
+    }
+
+    if (token) {
+      fetchData();
+    }
+  }, [token]);
 
   const handlePageChangeSales = async (event, newPage) => {
     setPageSales(newPage);
@@ -63,8 +84,8 @@ const Dashboard = () => {
 
   return (
     <>
-      {(isAdmin && <DashboardAdmin />) ||
-        (!isAdmin && loguedUser && (
+      {(isAdmin && loguedUser && token && <DashboardAdmin />) ||
+        (!isAdmin && loguedUser && token && (
           <DashboardSalesman
             token={token}
             sales={sales}
