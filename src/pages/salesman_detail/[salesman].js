@@ -19,6 +19,7 @@ import { getSales } from "../../utils/api/sales";
 import { AppContext } from "../../context/AppContext";
 import { BarChartWithTable } from "../../components/charts/BarChartWithTable";
 import { getLocalStorage } from "../../utils/helpers/localStorage";
+import { TasksProgress } from "../../components/dashboard/tasks-progress";
 
 const SalesmanDetail = () => {
   const router = useRouter();
@@ -35,7 +36,12 @@ const SalesmanDetail = () => {
     category: "categories",
     product: "products",
   };
+
   const [token, setToken] = useState(null);
+  const [salesPredicted, setSalesPredicted] = useState(null);
+  const [salesMonth, setSalesMonth] = useState(null);
+  const [salesMonthIncomePredicted, setSalesMonthIncomePredicted] = useState(null);
+  const [salesMonthIncome, setSalesMonthIncome] = useState(null);
 
   const handleChangeStatistic = (event) => {
     setStatisticType(event.target.value);
@@ -51,14 +57,13 @@ const SalesmanDetail = () => {
     setSalesmanSales(data);
   };
 
-    useEffect(() => {
+  useEffect(() => {
     const aux = getLocalStorage("token");
     setToken(getLocalStorage("token"));
     if (!aux) {
       router.push("/login");
     }
   }, []);
-
 
   useEffect(() => {
     async function fetchData() {
@@ -83,10 +88,37 @@ const SalesmanDetail = () => {
         }
       }
 
-      if (!income) {
+      if (!salesPredicted) {
+        const { data, request } = await getSalesmanIA(token, router.query.salesman, false);
+        if (request.ok) {
+          setSalesPredicted(data);
+        }
+      }
+
+      if (!salesMonthIncomePredicted) {
         const { data, request } = await getSalesmanIA(token, router.query.salesman, true);
         if (request.ok) {
-          setIncome(data[0]);
+          setSalesMonthIncomePredicted(data);
+        }
+      }
+
+      if (!salesMonth) {
+        const { data, request } = await getSales(
+          token,
+          null,
+          `date_start=2022-02-01&date_end=2022-03-01&salesman=${router.query.salesman}`
+        );
+        if (request.ok) {
+          console.log("febrero sales ", data);
+          setSalesMonth(data.count);
+          let sum = 0;
+          for (let i = 0; i < data.results.length; i++) {
+            const aux_date = new Date(data.results[i].date);
+            if (aux_date.getUTCMonth() === 1) {
+              summ += parseFloat(data.results[i].income);
+            }
+            setSalesMonthIncome(summ);
+          }
         }
       }
     }
@@ -94,6 +126,22 @@ const SalesmanDetail = () => {
       fetchData();
     }
   }, [token]);
+
+  // useEffect(() => {
+  //   let summ = 0;
+
+  //   console.log("a", salesmanSales);
+
+  //   if (salesmanSales) {
+  //     for (let i = 0; i < salesmanSales.results.length; i++) {
+  //       const aux_date = new Date(salesmanSales.results[i].date);
+  //       if (aux_date.getUTCMonth() === 1) {
+  //         summ += parseFloat(salesmanSales.results[i].income);
+  //       }
+  //       setSalesMonthIncome(summ);
+  //     }
+  //   }
+  // }, [salesmanSales]);
 
   useEffect(() => {
     async function fetchData() {
@@ -132,21 +180,33 @@ const SalesmanDetail = () => {
             </Typography>
             <Grid container spacing={3}>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <StatisticPanel value={indicator.purchases} title="Ventas realizadas" />
+                <StatisticPanel
+                  title="Ingresos generados del mes"
+                  value={`${Math.round(salesMonthIncome * 100) / 100}$`}
+                  subTitle="Cantidad de ventas del mes del vendedor"
+                  valueSubTitle={salesMonth}
+                />
               </Grid>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <StatisticPanel value={`# ${indicator.biggest_sale}`} title="Venta mas alta" />
-              </Grid>{" "}
-              <Grid item lg={3} sm={6} xl={3} xs={12}>
                 <StatisticPanel
-                  value={`${indicator.money_generated}$`}
-                  title="Ingresos generados"
+                  title="Ingresos esperados generados por el vendedor"
+                  value={Math.round(salesMonthIncomePredicted * 100) / 100}
+                  subTitle="Ingresos esperados generados por el vendedor"
+                  valueSubTitle={Math.round(salesPredicted * 100) / 100}
                 />
-              </Grid>{" "}
+              </Grid>
+              <Grid item xl={3} lg={3} sm={6} xs={12}>
+                <TasksProgress
+                  task="Progreso del objetivo del mes del vendedor, cantidad de ventas"
+                  goal={salesPredicted}
+                  current={salesMonth}
+                />
+              </Grid>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <StatisticPanel
-                  value={`${Math.round(income * 100) / 100}$`}
-                  title="Proyeccion monto siguiente venta"
+                <TasksProgress
+                  task="Progreso del objetivo del mes del vendedor, ingresos generados"
+                  goal={salesMonthIncomePredicted}
+                  current={salesMonthIncome}
                 />
               </Grid>
               <Grid item lg={4} md={6} xs={12}>

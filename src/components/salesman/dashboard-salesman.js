@@ -149,7 +149,7 @@ const DashboardSalesman = ({
         const { data, request } = await getSales(
           token,
           null,
-          `date_start=2022-02-01&date_end=2022-03-01&limit=1&salesman${loguedUser.salesman.salesman.id}`
+          `date_start=2022-02-01&date_end=2022-03-01&limit=1&salesman=${loguedUser.salesman.salesman.id}`
         );
         if (request.ok) {
           setSalesMonth(data.count);
