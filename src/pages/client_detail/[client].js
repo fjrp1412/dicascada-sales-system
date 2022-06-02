@@ -19,9 +19,11 @@ import { getSales } from "../../utils/api/sales";
 import { AppContext } from "../../context/AppContext";
 import { BarChartWithTable } from "../../components/charts/BarChartWithTable";
 import { getLocalStorage } from "../../utils/helpers/localStorage";
+import { TasksProgress } from "../../components/dashboard/tasks-progress";
 
 const ClientDetail = () => {
   const router = useRouter();
+  const { isAdmin } = useContext(AppContext);
   const [client, setClient] = useState(null);
   const [indicator, setIndicator] = useState(null);
   const [statistic, setStatistic] = useState(null);
@@ -36,6 +38,11 @@ const ClientDetail = () => {
     product: "products",
   };
   const [token, setToken] = useState(null);
+
+  const [salesPredicted, setSalesPredicted] = useState(null);
+  const [salesMonth, setSalesMonth] = useState(null);
+  const [salesMonthIncomePredicted, setSalesMonthIncomePredicted] = useState(null);
+  const [salesMonthIncome, setSalesMonthIncome] = useState(null);
 
   const handleChangeStatistic = (event) => {
     setStatisticType(event.target.value);
@@ -82,10 +89,39 @@ const ClientDetail = () => {
         }
       }
 
-      if (!incomePredicted) {
+      if (!salesPredicted) {
+        const { data, request } = await getClientIA(token, router.query.client, false);
+        if (request.ok) {
+          setSalesPredicted(data);
+        }
+      }
+
+      if (!salesMonthIncomePredicted) {
         const { data, request } = await getClientIA(token, router.query.client, true);
         if (request.ok) {
-          setIncomePredicted(data);
+          setSalesMonthIncomePredicted(data);
+        }
+      }
+
+      if (!salesMonth) {
+        const { data, request } = await getSales(
+          token,
+          null,
+          `date_start=2022-02-01&date_end=2022-03-01&client=${router.query.client}`
+        );
+        if (request.ok) {
+          console.log("febrero sales ", data);
+          setSalesMonth(data.count);
+          let summ = 0;
+          for (let i = 0; i < data.results.length; i++) {
+            const aux_date = new Date(data.results[i].date);
+            if (aux_date.getMonth() === 1) {
+              console.log("date", aux_date);
+              summ += parseFloat(data.results[i].income);
+              console.log("valor a sumar", parseFloat(data.results[i].income));
+            }
+          }
+          setSalesMonthIncome(summ);
         }
       }
     }
@@ -124,47 +160,63 @@ const ClientDetail = () => {
               Detalle de Cliente
             </Typography>
             <Grid container spacing={3}>
-              {statistic ? (
-                <>
-                  {" "}
-                  <Grid item lg={3} sm={6} xl={3} xs={12}>
-                    <StatisticPanel value={indicator.purchases} title="Compras realizadas" />
-                  </Grid>
-                  <Grid item lg={3} sm={6} xl={3} xs={12}>
-                    <StatisticPanel
-                      value={`# ${indicator.biggest_sale}`}
-                      title="Compras mas alta"
-                    />
-                  </Grid>{" "}
-                  <Grid item lg={3} sm={6} xl={3} xs={12}>
-                    <StatisticPanel
-                      value={`${indicator.money_generated}$`}
-                      title="Ingresos generados"
-                    />
-                  </Grid>{" "}
-                  <Grid item lg={3} sm={6} xl={3} xs={12}>
-                    <StatisticPanel
-                      value={`${Math.round(incomePredicted * 100) / 100}$`}
-                      title="Proyeccion monto siguiente compra"
-                    />
-                  </Grid>
-                </>
-              ) : (
-                <>
-                  {" "}
-                  <Grid item lg={3} sm={6} xl={3} xs={12}>
-                    <StatisticPanel value={0} title="Compras realizadas" />
-                  </Grid>
-                  <Grid item lg={3} sm={6} xl={3} xs={12}>
-                    <StatisticPanel value="No hay compras registradas" title="Compras mas alta" />
-                  </Grid>{" "}
-                  <Grid item lg={3} sm={6} xl={3} xs={12}>
-                    <StatisticPanel value={`0$`} title="Ingresos generados" />
-                  </Grid>{" "}
-                  <Grid item lg={3} sm={6} xl={3} xs={12}>
-                    <StatisticPanel value={`0$`} title="Proyeccion monto siguiente compra" />
-                  </Grid>
-                </>
+              {isAdmin && (
+                <Grid container spacing={3}>
+                  {statistic ? (
+                    <>
+                      {" "}
+                      <Grid item lg={3} sm={6} xl={3} xs={12}>
+                        <StatisticPanel
+                          title="Ingresos generados del mes"
+                          value={`${Math.round(salesMonthIncome * 100) / 100}$`}
+                          subTitle="Cantidad de ventas del mes del cliente"
+                          valueSubTitle={salesMonth}
+                        />
+                      </Grid>
+                      <Grid item lg={3} sm={6} xl={3} xs={12}>
+                        <StatisticPanel
+                          title="Ingresos esperados generados por el cliente"
+                          value={Math.round(salesMonthIncomePredicted * 100) / 100}
+                          subTitle="Ingresos esperados generados por el cliente"
+                          valueSubTitle={Math.round(salesPredicted * 100) / 100}
+                        />
+                      </Grid>
+                      <Grid item xl={3} lg={3} sm={6} xs={12}>
+                        <TasksProgress
+                          task="Progreso del objetivo del mes del cliente, cantidad de ventas"
+                          goal={salesPredicted}
+                          current={salesMonth}
+                        />
+                      </Grid>
+                      <Grid item lg={3} sm={6} xl={3} xs={12}>
+                        <TasksProgress
+                          task="Progreso del objetivo del mes del cliente, ingresos generados"
+                          goal={salesMonthIncomePredicted}
+                          current={salesMonthIncome}
+                        />
+                      </Grid>
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <Grid item lg={3} sm={6} xl={3} xs={12}>
+                        <StatisticPanel value={0} title="Compras realizadas" />
+                      </Grid>
+                      <Grid item lg={3} sm={6} xl={3} xs={12}>
+                        <StatisticPanel
+                          value="No hay compras registradas"
+                          title="Compras mas alta"
+                        />
+                      </Grid>{" "}
+                      <Grid item lg={3} sm={6} xl={3} xs={12}>
+                        <StatisticPanel value={`0$`} title="Ingresos generados" />
+                      </Grid>{" "}
+                      <Grid item lg={3} sm={6} xl={3} xs={12}>
+                        <StatisticPanel value={`0$`} title="Proyeccion monto siguiente compra" />
+                      </Grid>
+                    </>
+                  )}
+                </Grid>
               )}
 
               <Grid item lg={4} md={6} xs={12}>

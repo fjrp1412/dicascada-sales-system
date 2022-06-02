@@ -151,9 +151,9 @@ const DashboardAdmin = () => {
               </Grid>
                   <Grid item lg={3} sm={6} xl={3} xs={12}>
                     <StatisticPanel
-                      title="Ingresos esperados generados por el vendedor"
-                      value={Math.round(salesMonthIncomePredicted * 100) / 100}
-                      subTitle="Ingresos esperados generados por el vendedor"
+                      title="Ingresos esperados en el mes"
+                      value={`${Math.round(salesMonthIncomePredicted * 100) / 100}$`}
+                      subTitle="Cantidad de ventas esperadas en el mes"
                       valueSubTitle={Math.round(predictedMonth* 100) / 100}
                     />
                   </Grid>

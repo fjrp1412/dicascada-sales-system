@@ -111,14 +111,16 @@ const SalesmanDetail = () => {
         if (request.ok) {
           console.log("febrero sales ", data);
           setSalesMonth(data.count);
-          let sum = 0;
+          let summ = 0;
           for (let i = 0; i < data.results.length; i++) {
             const aux_date = new Date(data.results[i].date);
-            if (aux_date.getUTCMonth() === 1) {
+            if (aux_date.getMonth() === 1) {
+              console.log('date', aux_date)
               summ += parseFloat(data.results[i].income);
+              console.log('valor a sumar', parseFloat(data.results[i].income))
             }
-            setSalesMonthIncome(summ);
           }
+            setSalesMonthIncome(summ);
         }
       }
     }

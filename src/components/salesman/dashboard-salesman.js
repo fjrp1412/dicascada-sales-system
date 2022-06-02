@@ -182,7 +182,7 @@ const DashboardSalesman = ({
     if (sales) {
       for (let i = 0; i < sales.results.length; i++) {
         const aux_date = new Date(sales.results[i].date);
-        if (aux_date.getUTCMonth() === 1) {
+        if (aux_date.getMonth() === 1) {
           summ += parseFloat(sales.results[i].income);
         }
         setSalesMonthIncome(summ);
@@ -234,8 +234,8 @@ const DashboardSalesman = ({
                   <Grid item lg={3} sm={6} xl={3} xs={12}>
                     <StatisticPanel
                       title="Ingresos esperados generados por el vendedor"
-                      value={Math.round(salesMonthIncomePredicted * 100) / 100}
-                      subTitle="Ingresos esperados generados por el vendedor"
+                      value={`${Math.round(salesMonthIncomePredicted * 100) / 100}$`}
+                      subTitle="Cantidad de ventas esperadas por el vendedor"
                       valueSubTitle={Math.round(salesPredicted * 100) / 100}
                     />
                   </Grid>
