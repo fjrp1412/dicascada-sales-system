@@ -166,7 +166,7 @@ const SalesmanDetail = () => {
   return (
     <DashboardLayout>
       <Head>
-        <title>Account | Material Kit</title>
+        <title>Detalle de Vendedor</title>
       </Head>
       {salesman && indicator ? (
         <Box

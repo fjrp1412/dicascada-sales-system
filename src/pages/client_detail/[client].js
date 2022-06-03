@@ -158,7 +158,7 @@ const ClientDetail = () => {
   return (
     <DashboardLayout>
       <Head>
-        <title>Account | Material Kit</title>
+        <title>Detalle de Cliente</title>
       </Head>
       {client && indicator ? (
         <Box

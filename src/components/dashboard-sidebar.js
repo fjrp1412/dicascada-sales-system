@@ -40,7 +40,7 @@ const items = [
   {
     href: "/sale_register",
     icon: <ReceiptIcon  fontSize="small" />,
-    title: "Registrar Ventas",
+    title: "Registrar Pedido",
     admin: false,
   },
   {
@@ -52,7 +52,7 @@ const items = [
   {
     href: "/orders_list",
     icon: <FormatListNumberedIcon fontSize="small" />,
-    title: "Lista De Ordenes de venta",
+    title: "Lista De Pedidos",
     admin: false,
   },
   {

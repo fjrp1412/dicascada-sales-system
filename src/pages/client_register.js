@@ -68,7 +68,7 @@ const ClientRegister = () => {
   return (
     <>
       <Head>
-        <title>Registrar de Venta</title>
+        <title>Registrar Cliente</title>
       </Head>
       <DashboardLayout>
         <Box

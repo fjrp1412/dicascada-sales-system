@@ -133,7 +133,7 @@ const SaleRegister = () => {
   return (
     <>
       <Head>
-        <title>Registro de Venta</title>
+        <title>Registro de Pediodo</title>
       </Head>
       <DashboardLayout>
         {token && clients && products && loguedUser && (
@@ -151,7 +151,7 @@ const SaleRegister = () => {
               <form onSubmit={formik.handleSubmit}>
                 <Box sx={{ my: 3 }}>
                   <Typography color="textPrimary" variant="h4">
-                    Registrar Venta
+                    Registrar Pedido
                   </Typography>
                 </Box>
                 <Grid container spacing={3}></Grid>
@@ -276,7 +276,7 @@ const SaleRegister = () => {
                     type="submit"
                     variant="contained"
                   >
-                    Registrar Venta
+                    Registrar Pedido
                   </Button>
                 </Box>
                 {openModal && (

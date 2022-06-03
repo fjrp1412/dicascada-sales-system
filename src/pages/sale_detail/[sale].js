@@ -151,7 +151,7 @@ const SaleDetail = () => {
   return (
     <>
       <Head>
-        <title>Login | Material Kit</title>
+        <title>Detalle de Venta</title>
       </Head>
       <DashboardLayout>
         {token && products && sale && (

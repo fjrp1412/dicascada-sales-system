@@ -95,7 +95,7 @@ const ProductsList = (props) => {
   return (
     <>
       <Head>
-        <title>Registrar Cliente</title>
+        <title>Lista de Productos</title>
       </Head>
     <DashboardLayout>
       <Card {...props}>
