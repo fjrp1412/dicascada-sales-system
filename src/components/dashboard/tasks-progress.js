@@ -33,7 +33,7 @@ export const TasksProgress = (props) => {
             color="textSecondary"
             variant="h6"
           >
-          Meta: {Math.round(goal * 100) / 100}
+          Meta: {goal > 0 ? Math.round(goal * 100) / 100 : "0"}
           </Typography>
           <Typography
             color="textSecondary"

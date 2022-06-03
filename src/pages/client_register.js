@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { useFormik } from "formik";
@@ -7,10 +7,12 @@ import { Box, Button, Container, Grid, TextField, Typography } from "@mui/materi
 import { DashboardLayout } from "../components/dashboard-layout";
 import { AppContext } from "src/context/AppContext";
 import { createClient } from "../utils/api/clients";
+import { getMe } from "../utils/api/user";
 import { getLocalStorage } from "../utils/helpers/localStorage";
 
 const ClientRegister = () => {
   const [token, setToken] = useState(null);
+  const { isAdmin, setIsAdmin, loguedUser, setLoguedUser } = useContext(AppContext);
 
   const router = useRouter();
   useEffect(() => {
@@ -21,13 +23,30 @@ const ClientRegister = () => {
     }
   }, []);
 
+  useEffect(() => {
+    async function fetchData() {
+      if (!loguedUser) {
+        const { data, request } = await getMe({ token });
+        if (request.ok) {
+          setLoguedUser(data);
+          if (data.type.toLowerCase() !== "salesman") {
+            setIsAdmin(true);
+          }
+        }
+      }
+    }
+
+    if (!loguedUser) {
+      fetchData();
+    }
+  }, [token]);
+
   const formik = useFormik({
     initialValues: {
-        address: "",
-        identity_card: "",
-        name: "",
-        phone: "",
-
+      address: "",
+      identity_card: "",
+      name: "",
+      phone: "",
     },
     validationSchema: Yup.object({
       identity_card: Yup.string().required("Cedula o Rif requerido"),
@@ -36,14 +55,13 @@ const ClientRegister = () => {
       address: Yup.string().required("Direccion requerida"),
     }),
     onSubmit: async (form) => {
-      console.log('formulario cliente', form);
-      const {data, request} = await createClient(token, form);
-      console.log('cliente', data)
+      console.log("formulario cliente", form);
+      const { data, request } = await createClient(token, form);
+      console.log("cliente", data);
 
-      if(request.ok) {
+      if (request.ok) {
         router.push("/");
       }
-
     },
   });
 
@@ -63,7 +81,7 @@ const ClientRegister = () => {
             width: "100%",
           }}
         >
-          <Container sx={{width: "100%"}} >
+          <Container sx={{ width: "100%" }}>
             <form onSubmit={formik.handleSubmit}>
               <Box sx={{ my: 3 }}>
                 <Typography color="textPrimary" variant="h4">
@@ -127,7 +145,7 @@ const ClientRegister = () => {
                 variant="outlined"
               />
 
-             <Box sx={{ py: 2 }}>
+              <Box sx={{ py: 2 }}>
                 <Button
                   color="primary"
                   disabled={formik.isSubmitting}

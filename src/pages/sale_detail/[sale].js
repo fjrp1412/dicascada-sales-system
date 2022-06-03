@@ -23,17 +23,28 @@ import { getProducts } from "../../utils/api/products";
 import { getSale, updateSale } from "../../utils/api/sales";
 import { FormSalesProductsModal } from "../../components/sales/form-products-modal";
 import { getLocalStorage } from "../../utils/helpers/localStorage";
+import { getMe } from "../../utils/api/user";
 
 const SaleDetail = () => {
   const router = useRouter();
   const [pageProducts, setPageProducts] = useState(0);
   const [productsCart, setProductsCart] = useState([]);
-  const { isAdmin, clients, products, setClients, setProducts } = useContext(AppContext);
+  const {
+    clients,
+    products,
+    setClients,
+    setProducts,
+    isAdmin,
+    loguedUser,
+    setLoguedUser,
+    setIsAdmin,
+  } = useContext(AppContext);
   const [openModal, setOpenModal] = useState(false);
   const [token, setToken] = useState(null);
   const [sale, setSale] = useState(null);
   const [order, setOrder] = useState([]);
   const [status, setStatus] = useState(null);
+  const [income, setIncome] = useState(0);
 
   useEffect(() => {
     const aux = getLocalStorage("token");
@@ -53,8 +64,19 @@ const SaleDetail = () => {
         if (request.ok) {
           setSale(data);
           setOrder(data.order);
-          console.log('order' ,data.order);
+          console.log("order", data.order);
           setStatus(data.status);
+          setIncome(data.income);
+        }
+      }
+
+      if (!loguedUser) {
+        const { data, request } = await getMe({ token });
+        if (request.ok) {
+          setLoguedUser(data);
+          if (data.type.toLowerCase() !== "salesman") {
+            setIsAdmin(true);
+          }
         }
       }
 
@@ -67,7 +89,7 @@ const SaleDetail = () => {
       }
     }
 
-    if (!sale || !products) {
+    if (!sale || !products || !loguedUser) {
       fetchData();
     }
   }, [token, router.isReady]);
@@ -78,9 +100,21 @@ const SaleDetail = () => {
     }
   }, [sale]);
 
+  useEffect(() => {
+    let aux = 0;
+
+    productsCart.forEach((product) => {
+      console.log("product income", product.income);
+      aux += parseFloat(product.income);
+    });
+
+    setIncome(Math.round(aux * 100) / 100);
+    console.log("income", aux);
+  }, [productsCart]);
+
   const handleChangeStatus = (e) => {
     setStatus(e.target.value);
-  }
+  };
 
   const handlePageChangeProducts = async (event, newPage) => {
     const newUrl = newPage > pageProducts ? productsCart.next : productsCart.previous;
@@ -110,7 +144,7 @@ const SaleDetail = () => {
       form.product = [...productsCart];
       form.id = sale.id;
       form.status = status;
-      console.log('form sale', form)
+      console.log("form sale", form);
     },
   });
 
@@ -164,7 +198,7 @@ const SaleDetail = () => {
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                   type="text"
-                  value={sale.income}
+                  value={income}
                   variant="outlined"
                 />
 
@@ -242,7 +276,7 @@ const SaleDetail = () => {
                   handleRemove={handleRemoveProduct}
                 ></ProductsList>
 
-                {sale.status.toLowerCase() !== "completed" && (
+                {sale.status.toLowerCase() !== "completed" && isAdmin && (
                   <>
                     <Box sx={{ py: 2, display: "flex", justifyContent: "flex-end", width: "100%" }}>
                       <IconButton
@@ -257,7 +291,7 @@ const SaleDetail = () => {
                     <Box sx={{ py: 2 }}>
                       <Button
                         color="primary"
-                        disabled={formik.isSubmitting}
+                        disabled={formik.isSubmitting || sale.status.toLowerCase() === "competed" || !isAdmin}
                         fullWidth
                         size="large"
                         type="submit"
@@ -266,7 +300,7 @@ const SaleDetail = () => {
                         Registrar Venta
                       </Button>
 
-                      {openModal && (
+                      {openModal &&  (
                         <FormSalesProductsModal
                           open={openModal}
                           handleClose={() => {

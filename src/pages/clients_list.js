@@ -16,11 +16,13 @@ import {
 import { AppContext } from "../context/AppContext";
 import { DashboardLayout } from "../components/dashboard-layout";
 import { getClients, getClientIndicator } from "../utils/api/clients";
+import { getMe } from "../utils/api/user";
 import { getLocalStorage } from "../utils/helpers/localStorage";
 import { Filter } from "../components/filter";
 
 const ClientsList = (props) => {
-  const { clients, setClients } = useContext(AppContext);
+  const { clients, setClients, setIsAdmin, isAdmin, loguedUser, setLoguedUser } =
+    useContext(AppContext);
   const [page, setPage] = useState(0);
   const router = useRouter();
   const [token, setToken] = useState(null);
@@ -36,14 +38,28 @@ const ClientsList = (props) => {
 
   useEffect(() => {
     async function fetchData() {
-      const { data, request } = await getClientIndicator(token, null);
-      if (request.ok) {
-        data.results = data.results.filter((element) => element.purchases > 8);
-        setClients(data);
+      if (!filteredClients) {
+        const { data, request } = await getClientIndicator(token, null);
+        if (request.ok) {
+          data.results = data.results.filter((element) => element.purchases > 8);
+          setClients(data);
+        }
+        console.log("indicators", data);
       }
-      console.log("indicators", data);
+
+      if (!loguedUser) {
+        const { data, request } = await getMe({ token });
+        if (request.ok) {
+          setLoguedUser(data);
+          if (data.type.toLowerCase() !== "salesman") {
+            setIsAdmin(true);
+          }
+        }
+      }
     }
-    fetchData();
+    if (!filteredClients || !loguedUser) {
+      fetchData();
+    }
   }, [token]);
 
   useEffect(() => {
@@ -62,8 +78,8 @@ const ClientsList = (props) => {
     if (request.ok) {
       setFilteredClients({ ...filteredClients, clients: data.results });
     }
-    console.log('filtered results', data)
-    console.log('filtered results 2', filteredClients)
+    console.log("filtered results", data);
+    console.log("filtered results 2", filteredClients);
   };
 
   const handleClear = () => {

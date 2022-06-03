@@ -18,9 +18,11 @@ import { DashboardLayout } from "../components/dashboard-layout";
 import { getProducts } from "../utils/api/products";
 import { getLocalStorage } from "../utils/helpers/localStorage";
 import { Filter } from "../components/filter";
+import { getMe } from "../utils/api/user";
 
 const ProductsList = (props) => {
-  const { products, setProducts } = useContext(AppContext);
+  const { products, setProducts, isAdmin, loguedUser, setLoguedUser, setIsAdmin } =
+    useContext(AppContext);
   const [page, setPage] = useState(0);
   const [token, setToken] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState(null);
@@ -37,12 +39,24 @@ const ProductsList = (props) => {
 
   useEffect(() => {
     async function fetchData() {
-      const { data, request } = await getProducts(token, null);
-      if (request.ok) {
-        setProducts(data);
+      if (!products) {
+        const { data, request } = await getProducts(token, null);
+        if (request.ok) {
+          setProducts(data);
+        }
+      }
+      if (!loguedUser) {
+        const { data, request } = await getMe({ token });
+        if (request.ok) {
+          setLoguedUser(data);
+          if (data.type.toLowerCase() !== "salesman") {
+            setIsAdmin(true);
+          }
+        }
       }
     }
-    if (!products) {
+
+    if (!products || !loguedUser) {
       fetchData();
     }
   }, [token]);

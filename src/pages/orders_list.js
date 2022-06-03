@@ -18,12 +18,14 @@ import { DashboardLayout } from "../components/dashboard-layout";
 import { getProducts } from "../utils/api/products";
 import { SeverityPill } from "../components/severity-pill";
 import { getSales } from "../utils/api/sales";
+import { getMe } from "../utils/api/user";
 import { getLocalStorage } from "../utils/helpers/localStorage";
 
 const OrderList = (props) => {
-  const [ orders, setOrders ] = useState(null);
+  const [orders, setOrders] = useState(null);
   const [page, setPage] = useState(0);
   const [token, setToken] = useState(null);
+  const { isAdmin, setIsAdmin, loguedUser, setLoguedUser } = useContext(AppContext);
 
   const router = useRouter();
 
@@ -37,17 +39,47 @@ const OrderList = (props) => {
 
   useEffect(() => {
     async function fetchData() {
-        const { data, request } = await getSales(token, null);
+      if (!loguedUser) {
+        const { data, request } = await getMe({ token });
+        console.log("user", data);
         if (request.ok) {
-          setOrders({...data, results: data.results.filter((sale) => sale.status === "PENDING")});
+          setLoguedUser(data);
+          if (data.type.toLowerCase() !== "salesman") {
+            setIsAdmin(true);
+          }
         }
       }
+    }
+      fetchData();
+  }, [token]);
 
-      if(!orders) {
-        fetchData();
+  useEffect(() => {
+    async function fetchData() {
+      if (!orders && isAdmin) {
+        const { data, request } = await getSales(token, null, `status=PENDING`);
+        console.log("admin");
+        if (request.ok) {
+          // setOrders({...data, results: data.results.filter((sale) => sale.status === "PENDING")});
+          setOrders(data);
+        }
+      } else if (!orders && !isAdmin) {
+        const { data, request } = await getSales(
+          token,
+          null,
+          `salesman=${loguedUser.id}&status=PENDING`
+        );
+        console.log("salesman");
+        if (request.ok) {
+          // setOrders({...data, results: data.results.filter((sale) => sale.status === "PENDING")});
+          setOrders(data);
+        }
       }
+    }
 
-  }, [token])
+    if(loguedUser && !orders) {
+      fetchData();
+    }
+  }, [loguedUser, isAdmin, token]);
 
   const handlePageChange = async (event, newPage) => {
     const newUrl = newPage > page ? orders.next : orders.previous;
@@ -58,7 +90,7 @@ const OrderList = (props) => {
 
   const handleClick = (sale) => {
     router.push(`/sale_detail/${sale.id}`);
-  }
+  };
 
   return (
     <DashboardLayout>
@@ -80,8 +112,7 @@ const OrderList = (props) => {
               <TableBody>
                 {orders &&
                   orders.results.map((sale) => (
-                    <TableRow hover key={sale.id}
-                    onClick={() => handleClick(sale)}>
+                    <TableRow hover key={sale.id} onClick={() => handleClick(sale)}>
                       <TableCell>{sale.id}</TableCell>
                       <TableCell>{sale.date}</TableCell>
                       <TableCell>{sale.income}</TableCell>
@@ -136,4 +167,3 @@ const OrderList = (props) => {
 };
 
 export default OrderList;
-

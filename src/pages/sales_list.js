@@ -20,9 +20,11 @@ import { SeverityPill } from "../components/severity-pill";
 import { getSales } from "../utils/api/sales";
 import { getLocalStorage } from "../utils/helpers/localStorage";
 import { Filter } from "../components/filter";
+import { getMe } from "../utils/api/user";
 
 const SalesList = (props) => {
-  const { sales, setSales } = useContext(AppContext);
+  const { sales, setSales, isAdmin, loguedUser, setLoguedUser, setIsAdmin } =
+    useContext(AppContext);
   const [page, setPage] = useState(0);
   const [token, setToken] = useState(null);
   const [filteredSales, setFilteredSales] = useState(null);
@@ -39,20 +41,34 @@ const SalesList = (props) => {
 
   useEffect(() => {
     async function fetchData() {
-      const { data, request } = await getSales(token, null);
-      if (request.ok) {
-        setSales({...data, results: data.results.filter((sale) => sale.status === "COMPLETED")});
+      if (!sales) {
+        const { data, request } = await getSales(token, null);
+        if (request.ok) {
+          setSales({
+            ...data,
+            results: data.results.filter((sale) => sale.status === "COMPLETED"),
+          });
+        }
+      }
+      if (!loguedUser) {
+        const { data, request } = await getMe({ token });
+        if (request.ok) {
+          setLoguedUser(data);
+          if (data.type.toLowerCase() !== "salesman") {
+            setIsAdmin(true);
+          }
+        }
       }
     }
 
-    if (!sales) {
+    if (!sales || !loguedUser) {
       fetchData();
     }
   }, [token]);
 
   useEffect(() => {
     setFilteredSales(sales);
-  }, [sales])
+  }, [sales]);
 
   const handlePageChange = async (event, newPage) => {
     const newUrl = newPage > page ? sales.next : sales.previous;
@@ -71,29 +87,27 @@ const SalesList = (props) => {
     Object.entries(query).forEach((element) => {
       aux = aux + `${element[0]}=${element[1]}&`;
     });
-    console.log('aux', aux);
-    
+    console.log("aux", aux);
+
     const { data, request } = await getSales(token, null, aux);
     if (request.ok) {
       setFilteredSales(data);
-     }
+    }
   };
 
   const handleClear = () => {
     setFilteredSales(sales);
-  }
+  };
 
   return (
     <DashboardLayout>
       <Card {...props}>
         <CardHeader title="Lista de Ventas" />
         <Box sx={{ width: "100%" }}>
-          <Filter 
-          fields={[
-            { title: "Factura", field: "id", type: "text" },
-            ]}
-          onFilter={handleFilter}
-          onClear={handleClear}
+          <Filter
+            fields={[{ title: "Factura", field: "id", type: "text" }]}
+            onFilter={handleFilter}
+            onClear={handleClear}
           ></Filter>
           <TableContainer sx={{ maxHeight: "100%", width: "100%" }}>
             <Table>

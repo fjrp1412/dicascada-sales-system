@@ -33,6 +33,7 @@ const Dashboard = () => {
   const [allSales, setAllSales] = useState(null);
   const [token, setToken] = useState(null);
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const aux = getLocalStorage("token");
@@ -56,10 +57,21 @@ const Dashboard = () => {
       }
     }
 
-    if (token) {
+    if (token && !loguedUser) {
       fetchData();
     }
+
+
   }, [token]);
+
+
+  useEffect(() => {
+    if(loguedUser) {
+      console.log('uwu')
+      setLoading(false);
+    }
+  }, [loguedUser])
+
 
   const handlePageChangeSales = async (event, newPage) => {
     setPageSales(newPage);
@@ -84,8 +96,8 @@ const Dashboard = () => {
 
   return (
     <>
-      {(isAdmin && loguedUser && token && <DashboardAdmin />) ||
-        (!isAdmin && loguedUser && token && (
+      {(isAdmin && loguedUser && token && !loading && <DashboardAdmin />) ||
+        (!isAdmin && loguedUser && token && !loading && (
           <DashboardSalesman
             token={token}
             sales={sales}

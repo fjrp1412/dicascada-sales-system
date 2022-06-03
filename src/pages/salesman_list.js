@@ -17,13 +17,15 @@ import { AppContext } from "../context/AppContext";
 import { getSalesmans } from "../utils/api/salesman";
 import { DashboardLayout } from "../components/dashboard-layout";
 import { getLocalStorage } from "../utils/helpers/localStorage";
+import { getMe } from "../utils/api/user";
 
 const SalesmanList = (props) => {
-  const [salesmans, setSalesmans] = useState(null);
   const [page, setPage] = useState(0);
   const [token, setToken] = useState(null);
 
   const router = useRouter();
+  const { salesmans, setSalesmans, isAdmin, loguedUser, setLoguedUser, setIsAdmin } =
+    useContext(AppContext);
 
   useEffect(() => {
     const aux = getLocalStorage("token");
@@ -33,13 +35,27 @@ const SalesmanList = (props) => {
     }
   }, []);
 
-
-  useEffect(async () => {
-    if (!salesmans) {
-      const { data, request } = await getSalesmans(token, null);
-      if (request.ok) {
-        setSalesmans(data);
+  useEffect(() => {
+    async function fetchData() {
+      if(!loguedUser) {
+        const { data, request } = await getMe({ token });
+        if (request.ok) {
+          setLoguedUser(data);
+          if (data.type.toLowerCase() !== "salesman") {
+            setIsAdmin(true);
+          }
+        }
       }
+      if (!salesmans) {
+        const { data, request } = await getSalesmans(token, null);
+        if (request.ok) {
+          setSalesmans(data);
+        }
+      }
+    }
+
+    if(!salesmans || !loguedUser) {
+      fetchData();
     }
   }, [token]);
 

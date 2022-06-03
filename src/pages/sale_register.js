@@ -24,12 +24,13 @@ import { getClientIndicator } from "../utils/api/clients";
 import { FormSalesProductsModal } from "../components/sales/form-products-modal";
 import { getLocalStorage } from "../utils/helpers/localStorage";
 import { createOrder, createProductOrder } from "../utils/api/orders";
+import { getMe } from "../utils/api/user";
 
 const SaleRegister = () => {
   const router = useRouter();
   const [pageProducts, setPageProducts] = useState(0);
   const [productsCart, setProductsCart] = useState([]);
-  const { clients, loguedUser, products, setClients, setProducts } = useContext(AppContext);
+  const { clients, loguedUser, products, setClients, setProducts, isAdmin, setLoguedUser, setIsAdmin } = useContext(AppContext);
   const [openModal, setOpenModal] = useState(false);
   const [token, setToken] = useState(null);
   const [income, setIncome] = useState(null);
@@ -58,9 +59,19 @@ const SaleRegister = () => {
           setProducts(data);
         }
       }
+
+      if(!loguedUser) {
+        const { data, request } = await getMe({token});
+        if(request.ok) {
+          setLoguedUser(data);
+          if(data.type.toLowerCase() !== "salesman") {
+            setIsAdmin(true);
+          }
+        }
+      }
     }
 
-    if (!clients || !products) {
+    if (!clients || !products || !loguedUser) {
       fetchData();
     }
   }, [token]);
@@ -125,7 +136,7 @@ const SaleRegister = () => {
         <title>Login | Material Kit</title>
       </Head>
       <DashboardLayout>
-        {token && clients && products && (
+        {token && clients && products && loguedUser && (
           <Box
             component="main"
             sx={{
