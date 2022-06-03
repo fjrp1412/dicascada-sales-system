@@ -140,7 +140,7 @@ const DashboardAdmin = () => {
   return (
     <>
       <Head>
-        <title>Dashboard Admin| Material Kit</title>
+        <title>Dashboard Admin</title>
       </Head>
       <Box
         component="main"

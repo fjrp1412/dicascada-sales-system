@@ -41,7 +41,7 @@ const Login = () => {
   return (
     <>
       <Head>
-        <title>Login | Material Kit</title>
+        <title>Iniciar sesion</title>
       </Head>
       <Box
         component="main"

@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect } from "react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import {
   Box,
@@ -100,81 +101,86 @@ const SalesList = (props) => {
   };
 
   return (
-    <DashboardLayout>
-      <Card {...props}>
-        <CardHeader title="Lista de Ventas" />
-        <Box sx={{ width: "100%" }}>
-          <Filter
-            fields={[{ title: "Factura", field: "id", type: "text" }]}
-            onFilter={handleFilter}
-            onClear={handleClear}
-          ></Filter>
-          <TableContainer sx={{ maxHeight: "100%", width: "100%" }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Factura</TableCell>
-                  <TableCell>Fecha</TableCell>
-                  <TableCell>Monto</TableCell>
-                  <TableCell>Vendedor</TableCell>
-                  <TableCell>Cliente</TableCell>
-                  <TableCell>Estado</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredSales &&
-                  filteredSales.results.map((sale) => (
-                    <TableRow hover key={sale.id} onClick={() => handleClick(sale)}>
-                      <TableCell>{sale.id}</TableCell>
-                      <TableCell>{sale.date}</TableCell>
-                      <TableCell>{sale.income}</TableCell>
-                      <TableCell>{sale.salesman.name}</TableCell>
-                      <TableCell>{sale.client.name}</TableCell>
-                      <TableCell>
-                        <SeverityPill
-                          color={
-                            (sale.status.toLowerCase() === "completed" && "success") ||
-                            (sale.status === "refunded" && "error") ||
-                            "warning"
-                          }
-                        >
-                          {sale.status}
-                        </SeverityPill>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  {filteredSales && (
-                    <TablePagination
-                      colSpan={3}
-                      count={filteredSales.count}
-                      rowsPerPage={100}
-                      onPageChange={handlePageChange}
-                      page={page}
-                      SelectProps={{
-                        inputProps: {
-                          "aria-label": "rows per page",
-                        },
-                        native: true,
-                      }}
-                    />
-                  )}
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </TableContainer>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            p: 2,
-          }}
-        ></Box>
-      </Card>
-    </DashboardLayout>
+    <>
+      <Head>
+        <title>Registrar de Venta</title>
+      </Head>
+      <DashboardLayout>
+        <Card {...props}>
+          <CardHeader title="Lista de Ventas" />
+          <Box sx={{ width: "100%" }}>
+            <Filter
+              fields={[{ title: "Factura", field: "id", type: "text" }]}
+              onFilter={handleFilter}
+              onClear={handleClear}
+            ></Filter>
+            <TableContainer sx={{ maxHeight: "100%", width: "100%" }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Factura</TableCell>
+                    <TableCell>Fecha</TableCell>
+                    <TableCell>Monto</TableCell>
+                    <TableCell>Vendedor</TableCell>
+                    <TableCell>Cliente</TableCell>
+                    <TableCell>Estado</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredSales &&
+                    filteredSales.results.map((sale) => (
+                      <TableRow hover key={sale.id} onClick={() => handleClick(sale)}>
+                        <TableCell>{sale.id}</TableCell>
+                        <TableCell>{sale.date}</TableCell>
+                        <TableCell>{sale.income}</TableCell>
+                        <TableCell>{sale.salesman.name}</TableCell>
+                        <TableCell>{sale.client.name}</TableCell>
+                        <TableCell>
+                          <SeverityPill
+                            color={
+                              (sale.status.toLowerCase() === "completed" && "success") ||
+                              (sale.status === "refunded" && "error") ||
+                              "warning"
+                            }
+                          >
+                            {sale.status}
+                          </SeverityPill>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    {filteredSales && (
+                      <TablePagination
+                        colSpan={3}
+                        count={filteredSales.count}
+                        rowsPerPage={100}
+                        onPageChange={handlePageChange}
+                        page={page}
+                        SelectProps={{
+                          inputProps: {
+                            "aria-label": "rows per page",
+                          },
+                          native: true,
+                        }}
+                      />
+                    )}
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </TableContainer>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              p: 2,
+            }}
+          ></Box>
+        </Card>
+      </DashboardLayout>
+    </>
   );
 };
 

@@ -51,7 +51,7 @@ const items = [
   },
   {
     href: "/orders_list",
-    icon: <UsersIcon fontSize="small" />,
+    icon: <FormatListNumberedIcon fontSize="small" />,
     title: "Lista De Ordenes de venta",
     admin: false,
   },

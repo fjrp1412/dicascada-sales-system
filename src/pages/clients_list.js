@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
 import {
   Box,
   Card,
@@ -94,75 +95,80 @@ const ClientsList = (props) => {
   };
 
   return (
-    <DashboardLayout>
-      <Card {...props}>
-        <CardHeader title="Lista de Clientes" />
-        <Box sx={{ width: "100%" }}>
-          <Filter
-            fields={[
-              { title: "Nombre", field: "name", type: "text" },
-              { title: "Cedula/Rif", field: "identity_card", type: "text" },
-            ]}
-            onFilter={handleFilter}
-            onClear={handleClear}
-          ></Filter>
-          <TableContainer sx={{ maxHeight: "100%", width: "100%" }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Nombre</TableCell>
-                  <TableCell>Cedula o Rif</TableCell>
-                  <TableCell>Numero de tlf</TableCell>
-                  <TableCell>Direccion</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredClients &&
-                  filteredClients.results.map((client) => (
-                    <TableRow
-                      hover
-                      key={client.client.id}
-                      onClick={() => router.push(`/client_detail/${client.client.id}`)}
-                      sx={{ cursor: "pointer" }}
-                    >
-                      <TableCell>{client.client.name}</TableCell>
-                      <TableCell>{client.client.identity_card}</TableCell>
-                      <TableCell>{client.client.phone}</TableCell>
-                      <TableCell>{client.client.address}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  {filteredClients && (
-                    <TablePagination
-                      colSpan={3}
-                      count={clients.count}
-                      rowsPerPage={100}
-                      onPageChange={handlePageChange}
-                      page={page}
-                      SelectProps={{
-                        inputProps: {
-                          "aria-label": "rows per page",
-                        },
-                        native: true,
-                      }}
-                    />
-                  )}
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </TableContainer>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            p: 2,
-          }}
-        ></Box>
-      </Card>
-    </DashboardLayout>
+    <>
+    <Head>
+      <title>Lista de clientes</title>
+    </Head>
+      <DashboardLayout>
+        <Card {...props}>
+          <CardHeader title="Lista de Clientes" />
+          <Box sx={{ width: "100%" }}>
+            <Filter
+              fields={[
+                { title: "Nombre", field: "name", type: "text" },
+                { title: "Cedula/Rif", field: "identity_card", type: "text" },
+              ]}
+              onFilter={handleFilter}
+              onClear={handleClear}
+            ></Filter>
+            <TableContainer sx={{ maxHeight: "100%", width: "100%" }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Nombre</TableCell>
+                    <TableCell>Cedula o Rif</TableCell>
+                    <TableCell>Numero de tlf</TableCell>
+                    <TableCell>Direccion</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredClients &&
+                    filteredClients.results.map((client) => (
+                      <TableRow
+                        hover
+                        key={client.client.id}
+                        onClick={() => router.push(`/client_detail/${client.client.id}`)}
+                        sx={{ cursor: "pointer" }}
+                      >
+                        <TableCell>{client.client.name}</TableCell>
+                        <TableCell>{client.client.identity_card}</TableCell>
+                        <TableCell>{client.client.phone}</TableCell>
+                        <TableCell>{client.client.address}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    {filteredClients && (
+                      <TablePagination
+                        colSpan={3}
+                        count={clients.count}
+                        rowsPerPage={100}
+                        onPageChange={handlePageChange}
+                        page={page}
+                        SelectProps={{
+                          inputProps: {
+                            "aria-label": "rows per page",
+                          },
+                          native: true,
+                        }}
+                      />
+                    )}
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </TableContainer>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              p: 2,
+            }}
+          ></Box>
+        </Card>
+      </DashboardLayout>
+    </>
   );
 };
 

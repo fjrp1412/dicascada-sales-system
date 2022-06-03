@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import {
   Box,
@@ -37,7 +38,7 @@ const SalesmanList = (props) => {
 
   useEffect(() => {
     async function fetchData() {
-      if(!loguedUser) {
+      if (!loguedUser) {
         const { data, request } = await getMe({ token });
         if (request.ok) {
           setLoguedUser(data);
@@ -54,7 +55,7 @@ const SalesmanList = (props) => {
       }
     }
 
-    if(!salesmans || !loguedUser) {
+    if (!salesmans || !loguedUser) {
       fetchData();
     }
   }, [token]);
@@ -69,6 +70,9 @@ const SalesmanList = (props) => {
 
   return (
     <>
+      <Head>
+        <title>Lista de vendedores</title>
+      </Head>
       <DashboardLayout>
         <Card {...props}>
           <CardHeader title="Lista de Vendedores" />

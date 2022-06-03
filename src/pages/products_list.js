@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
 import {
   Box,
   Card,
@@ -92,6 +93,10 @@ const ProductsList = (props) => {
   };
 
   return (
+    <>
+      <Head>
+        <title>Registrar Cliente</title>
+      </Head>
     <DashboardLayout>
       <Card {...props}>
         <CardHeader title="Lista de Productos" />
@@ -161,7 +166,7 @@ const ProductsList = (props) => {
           }}
         ></Box>
       </Card>
-    </DashboardLayout>
+    </DashboardLayout></>
   );
 };
 

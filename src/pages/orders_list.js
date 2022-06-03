@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect } from "react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import {
   Box,
@@ -50,7 +51,7 @@ const OrderList = (props) => {
         }
       }
     }
-      fetchData();
+    fetchData();
   }, [token]);
 
   useEffect(() => {
@@ -76,7 +77,7 @@ const OrderList = (props) => {
       }
     }
 
-    if(loguedUser && !orders) {
+    if (loguedUser && !orders) {
       fetchData();
     }
   }, [loguedUser, isAdmin, token]);
@@ -93,76 +94,81 @@ const OrderList = (props) => {
   };
 
   return (
-    <DashboardLayout>
-      <Card {...props}>
-        <CardHeader title="Lista de Ordenes de venta" />
-        <Box sx={{ width: "100%" }}>
-          <TableContainer sx={{ maxHeight: "100%", width: "100%" }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Factura</TableCell>
-                  <TableCell>Fecha</TableCell>
-                  <TableCell>Monto</TableCell>
-                  <TableCell>Vendedor</TableCell>
-                  <TableCell>Cliente</TableCell>
-                  <TableCell>Estado</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {orders &&
-                  orders.results.map((sale) => (
-                    <TableRow hover key={sale.id} onClick={() => handleClick(sale)}>
-                      <TableCell>{sale.id}</TableCell>
-                      <TableCell>{sale.date}</TableCell>
-                      <TableCell>{sale.income}</TableCell>
-                      <TableCell>{sale.salesman.name}</TableCell>
-                      <TableCell>{sale.client.name}</TableCell>
-                      <TableCell>
-                        <SeverityPill
-                          color={
-                            (sale.status.toLowerCase() === "completed" && "success") ||
-                            (sale.status === "refunded" && "error") ||
-                            "warning"
-                          }
-                        >
-                          {sale.status}
-                        </SeverityPill>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  {orders && (
-                    <TablePagination
-                      colSpan={3}
-                      count={orders.count}
-                      rowsPerPage={100}
-                      onPageChange={handlePageChange}
-                      page={page}
-                      SelectProps={{
-                        inputProps: {
-                          "aria-label": "rows per page",
-                        },
-                        native: true,
-                      }}
-                    />
-                  )}
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </TableContainer>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            p: 2,
-          }}
-        ></Box>
-      </Card>
-    </DashboardLayout>
+    <>
+      <Head>
+        <title>Lista de ordenes de venta</title>
+      </Head>
+      <DashboardLayout>
+        <Card {...props}>
+          <CardHeader title="Lista de Ordenes de venta" />
+          <Box sx={{ width: "100%" }}>
+            <TableContainer sx={{ maxHeight: "100%", width: "100%" }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Factura</TableCell>
+                    <TableCell>Fecha</TableCell>
+                    <TableCell>Monto</TableCell>
+                    <TableCell>Vendedor</TableCell>
+                    <TableCell>Cliente</TableCell>
+                    <TableCell>Estado</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {orders &&
+                    orders.results.map((sale) => (
+                      <TableRow hover key={sale.id} onClick={() => handleClick(sale)}>
+                        <TableCell>{sale.id}</TableCell>
+                        <TableCell>{sale.date}</TableCell>
+                        <TableCell>{sale.income}</TableCell>
+                        <TableCell>{sale.salesman.name}</TableCell>
+                        <TableCell>{sale.client.name}</TableCell>
+                        <TableCell>
+                          <SeverityPill
+                            color={
+                              (sale.status.toLowerCase() === "completed" && "success") ||
+                              (sale.status === "refunded" && "error") ||
+                              "warning"
+                            }
+                          >
+                            {sale.status}
+                          </SeverityPill>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    {orders && (
+                      <TablePagination
+                        colSpan={3}
+                        count={orders.count}
+                        rowsPerPage={100}
+                        onPageChange={handlePageChange}
+                        page={page}
+                        SelectProps={{
+                          inputProps: {
+                            "aria-label": "rows per page",
+                          },
+                          native: true,
+                        }}
+                      />
+                    )}
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </TableContainer>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              p: 2,
+            }}
+          ></Box>
+        </Card>
+      </DashboardLayout>
+    </>
   );
 };
 

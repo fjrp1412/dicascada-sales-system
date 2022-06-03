@@ -133,7 +133,7 @@ const SaleRegister = () => {
   return (
     <>
       <Head>
-        <title>Login | Material Kit</title>
+        <title>Registro de Venta</title>
       </Head>
       <DashboardLayout>
         {token && clients && products && loguedUser && (

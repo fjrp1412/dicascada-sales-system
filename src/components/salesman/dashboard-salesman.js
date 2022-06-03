@@ -221,7 +221,7 @@ const DashboardSalesman = ({
     <>
       <DashboardLayout>
         <Head>
-          <title>Dashboard Salesman| Material Kit</title>
+          <title>Dashboard Salesman</title>
         </Head>
         <Box
           component="main"
