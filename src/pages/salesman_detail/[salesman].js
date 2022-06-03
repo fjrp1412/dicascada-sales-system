@@ -193,7 +193,7 @@ const SalesmanDetail = () => {
                 <StatisticPanel
                   title="Ingresos esperados generados por el vendedor"
                   value={Math.round(salesMonthIncomePredicted * 100) / 100}
-                  subTitle="Ingresos esperados generados por el vendedor"
+                  subTitle="Cantidad de ventas esperadas por el vendedor"
                   valueSubTitle={Math.round(salesPredicted * 100) / 100}
                 />
               </Grid>
