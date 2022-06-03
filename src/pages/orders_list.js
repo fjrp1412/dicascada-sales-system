@@ -96,11 +96,11 @@ const OrderList = (props) => {
   return (
     <>
       <Head>
-        <title>Lista de ordenes de venta</title>
+        <title>Lista de Pedidos</title>
       </Head>
       <DashboardLayout>
         <Card {...props}>
-          <CardHeader title="Lista de Ordenes de venta" />
+          <CardHeader title="Lista de Pedidos" />
           <Box sx={{ width: "100%" }}>
             <TableContainer sx={{ maxHeight: "100%", width: "100%" }}>
               <Table>
