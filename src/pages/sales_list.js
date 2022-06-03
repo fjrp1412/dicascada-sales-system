@@ -42,15 +42,24 @@ const SalesList = (props) => {
 
   useEffect(() => {
     async function fetchData() {
-      if (!sales) {
-        const { data, request } = await getSales(token, null);
-        if (request.ok) {
-          setSales({
-            ...data,
-            results: data.results.filter((sale) => sale.status === "COMPLETED"),
-          });
+      if (!filteredSales) {
+        if (!isAdmin) {
+          const { data, request } = await getSales(token, null, `status=COMPLETED`);
+          if (request.ok) {
+            setFilteredSales(data);
+          }
+        } else {
+          const { data, request } = await getSales(
+            token,
+            null,
+            `salesman=${loguedUser.salesman.salesman.id}&status=COMPLETED`
+          );
+          if (request.ok) {
+            setFilteredSales(data);
+          }
         }
       }
+
       if (!loguedUser) {
         const { data, request } = await getMe({ token });
         if (request.ok) {
@@ -62,14 +71,10 @@ const SalesList = (props) => {
       }
     }
 
-    if (!sales || !loguedUser) {
+    if (!filteredSales || !loguedUser) {
       fetchData();
     }
   }, [token]);
-
-  useEffect(() => {
-    setFilteredSales(sales);
-  }, [sales]);
 
   const handlePageChange = async (event, newPage) => {
     const newUrl = newPage > page ? sales.next : sales.previous;
@@ -103,7 +108,7 @@ const SalesList = (props) => {
   return (
     <>
       <Head>
-        <title>Registrar de Venta</title>
+        <title>Lista de Ventas</title>
       </Head>
       <DashboardLayout>
         <Card {...props}>

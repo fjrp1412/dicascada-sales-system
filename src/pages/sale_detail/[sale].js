@@ -169,7 +169,7 @@ const SaleDetail = () => {
               <form onSubmit={formik.handleSubmit}>
                 <Box sx={{ my: 3 }}>
                   <Typography color="textPrimary" variant="h4">
-                    Registrar Venta
+                    Detalle de Venta
                   </Typography>
                 </Box>
                 <Grid container spacing={3}></Grid>
